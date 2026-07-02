@@ -1,0 +1,210 @@
+/*
+ * Sileo theme — companion stylesheet for src/styles/wiss.ts.
+ *
+ * wiss.ts computes and sets a handful of CSS custom properties per toast
+ * instance (--_h, --_pw, --_px, --_sy, --_ph, --_by, --_ht, --_co, --_dur).
+ * This stylesheet is what turns those numbers into the actual pill/card
+ * look. Selectors mirror the data-wiss-* attributes set by wiss.ts.
+ *
+ * The pill and body <rect>s are wrapped in a <g filter="url(#wiss-gooey-N)">
+ * (see src/styles/gooey.ts) that fuses them into one continuous blob instead
+ * of two shapes with a visible seam — don't add a border/outline to either
+ * rect here, the filter is what's responsible for the shared edge.
+ */
+
+/* box-sizing isn't inherited, and `all: unset` on the button doesn't reach
+   descendants either. Every width in this file (350px, var(--_pw), etc.) is
+   meant as a *total* box width — with the default content-box, padding gets
+   added on top instead of eating into that budget, so a box quietly grows
+   past its intended edge (padding on one side effectively "disappears" once
+   the parent's overflow:hidden clips it). */
+[data-wiss-toast],
+[data-wiss-toast] * {
+  box-sizing: border-box;
+}
+
+[data-wiss-toast] {
+  all: unset;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  height: var(--_h, 40px);
+  /* The header stays in the flex flow even when collapsed (only its opacity
+     fades), and the SVG canvas keeps its "frozen" expanded viewBox size (see
+     --_ph/svgHeight in wiss.ts) instead of shrinking back down. Without
+     clipping, both would paint outside the collapsed --_h box. */
+  overflow: hidden;
+  cursor: pointer;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  transition: height var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-wiss-toast][data-ready="false"] {
+  opacity: 0;
+  transform: translateY(8px) scale(0.96);
+}
+
+[data-wiss-toast][data-ready="true"] {
+  opacity: 1;
+  transform: none;
+  transition:
+    height var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 300ms ease,
+    transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-wiss-toast][data-exiting="true"] {
+  opacity: 0;
+  transform: translateY(6px) scale(0.96);
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
+/* --- Canvas (pill + body SVG background) --- */
+
+[data-wiss-canvas] {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+[data-wiss-svg] {
+  /* No height:100% on purpose — the SVG's own height/viewBox attributes
+     (set in wiss.ts from svgHeight) drive its real pixel size. Letting CSS
+     stretch it to the parent's height would rescale its whole internal
+     coordinate system whenever --_h and svgHeight briefly disagree (e.g.
+     right after collapsing, svgHeight stays "frozen" at the last expanded
+     value) instead of just getting clipped by the button's overflow:hidden. */
+  display: block;
+  width: 350px;
+  overflow: visible;
+}
+
+[data-wiss-pill] {
+  width: var(--_pw, 40px);
+  height: var(--_ph, 40px);
+  fill: #1c1c1e;
+  /* --_ph is a constant (HEIGHT + blur*3) taller than the visible 40px pill
+     — it exists to give the shape extra plumpness for the (future) gooey
+     filter. --_sy compresses it back down to the real height: 1 when
+     expanded (the extra height helps it blend into the body), HEIGHT/pillHeight
+     when collapsed (~0.6, so the visible pill is exactly 40px tall). */
+  transform-box: fill-box;
+  transform-origin: top center;
+  transform: scaleY(var(--_sy, 1));
+  transition:
+    width var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1),
+    transform var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1),
+    x var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-wiss-body] {
+  fill: #1c1c1e;
+  opacity: var(--_by, 0);
+  transition:
+    height var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1),
+    opacity var(--_dur, 600ms) ease;
+}
+
+/* --- Header (badge + title) --- */
+
+[data-wiss-header] {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 40px;
+  width: var(--_pw, 40px);
+  padding: 0 14px;
+  transform: translateX(var(--_px, 0px));
+  transition:
+    width var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1),
+    transform var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+[data-wiss-header-stack] {
+  position: relative;
+}
+
+[data-wiss-header-inner] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transform: var(--_ht, none);
+  transition: transform var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-wiss-badge] {
+  display: flex;
+  flex-shrink: 0;
+}
+[data-wiss-badge][data-state="success"] {
+  color: #34d399;
+}
+[data-wiss-badge][data-state="error"] {
+  color: #f87171;
+}
+[data-wiss-badge][data-state="warning"] {
+  color: #fbbf24;
+}
+[data-wiss-badge][data-state="info"] {
+  color: #60a5fa;
+}
+
+[data-wiss-title] {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+}
+[data-wiss-title][data-state="success"] {
+  color: #34d399;
+}
+[data-wiss-title][data-state="error"] {
+  color: #f87171;
+}
+[data-wiss-title][data-state="warning"] {
+  color: #fbbf24;
+}
+[data-wiss-title][data-state="info"] {
+  color: #60a5fa;
+}
+
+/* --- Content (optional description) --- */
+
+[data-wiss-content] {
+  position: relative;
+  z-index: 1;
+  /* Must stay 350px (WIDTH) — the button, the SVG canvas and the body <rect>
+     are all 350px wide, and the button clips overflow. A wider content box
+     here just gets its overflow cut off mid-text. */
+  width: 350px;
+  /* Top + bottom here (20 + 20 = 40) must match CONTENT_PADDING_Y in
+     wiss.ts, or the computed expanded height stops matching what's
+     actually rendered. */
+  padding: 20px 30px;
+  opacity: var(--_co, 0);
+  transition: opacity 250ms ease 150ms;
+  pointer-events: none;
+}
+[data-wiss-content][data-visible="true"] {
+  pointer-events: auto;
+}
+
+[data-wiss-description] {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #d4d4d8;
+  text-align: left;
+}

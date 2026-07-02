@@ -1,0 +1,39 @@
+# dependencies
+node_modules/
+
+# local tooling config
+.claude/
+
+# plan
+PLAN.md
+# logic
+logicExample.js
+
+# build output
+dist/
+*.tsbuildinfo
+
+# pnpm
+.pnpm-store/
+
+# env
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# os
+.DS_Store
+Thumbs.db
+
+# vite
+.vite/

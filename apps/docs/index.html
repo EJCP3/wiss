@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>wiss — preview de toasts</title>
+
+    <!-- Solo para esta vista rápida: Tailwind vía Play CDN (JIT en el navegador,
+         detecta clases inyectadas dinámicamente por wiss sin config extra) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { darkMode: 'class' };
+    </script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+  </head>
+  <body
+    class="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-slate-100 to-slate-300 dark:from-zinc-900 dark:to-zinc-950 transition-colors"
+  >
+    <main class="w-full max-w-md space-y-6 text-center">
+      <div>
+        <h1 class="text-3xl font-bold text-zinc-800 dark:text-zinc-100">wiss</h1>
+        <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+          Preview rápido de los toasts — dale clic a los botones.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <button
+          id="btn-success"
+          class="rounded-xl bg-emerald-500 px-4 py-2 font-medium text-white transition hover:bg-emerald-600"
+        >
+          Success
+        </button>
+        <button
+          id="btn-error"
+          class="rounded-xl bg-red-500 px-4 py-2 font-medium text-white transition hover:bg-red-600"
+        >
+          Error
+        </button>
+        <button
+          id="btn-warning"
+          class="rounded-xl bg-amber-500 px-4 py-2 font-medium text-white transition hover:bg-amber-600"
+        >
+          Warning
+        </button>
+        <button
+          id="btn-info"
+          class="rounded-xl bg-blue-500 px-4 py-2 font-medium text-white transition hover:bg-blue-600"
+        >
+          Info
+        </button>
+      </div>
+
+      <button
+        id="btn-theme"
+        class="rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-700 transition hover:bg-zinc-200/50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800/50"
+      >
+        Tema: <span id="theme-label">sileo</span> (clic para cambiar)
+      </button>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
