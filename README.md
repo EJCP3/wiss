@@ -100,8 +100,7 @@ export default {
 Fuera de alcance en esta fase, planeado para más adelante:
 
 - Adaptadores para **Vue** y **React**.
-- Tema **headless** (sin clases de estilo, pensado para integrarse con
-  shadcn/ui u otros sistemas de diseño propios).
+- Tema **headless** (sin clases de estilo, pensado para integrarse con otros sistemas de diseño propios).
 - Efecto de entrada/salida **"gooey pill"** con filtro SVG.
 - `toast.promise(...)` y toasts con **acciones** (botones dentro del toast).
 
