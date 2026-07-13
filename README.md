@@ -108,4 +108,6 @@ Fuera de alcance en esta fase, planeado para más adelante:
 
 ## Créditos
 
-* **Diseño Visual:** La estética base (con efectos de *glassmorphism* y bordes suaves) está profundamente inspirada en el excelente trabajo de [Sileo UI](https://sileo.aaryan.design/).
+* **Diseño Visual:** La estética base (con efectos de *glassmorphism* y bordes suaves) está inspirada en el diseño de [Sileo UI](https://sileo.aaryan.design/).
+
+* **Sonido de notificación** : los mini sonidos de las notificaciones son de [Cuelume](https://cuelume-site.pages.dev/)
