@@ -1,10 +1,12 @@
+import { bind, play } from 'cuelume';
 import type { ResolvedConfig } from '../core/config';
 import { getConfig, setConfig } from '../core/config';
 import { subscribe } from '../core/store';
 import { pauseAll, resumeAll } from '../core/timers';
-import type { Position, Toast, WissConfig } from '../core/types';
+import type { Position, Toast, ToastType, WissConfig } from '../core/types';
 import { renderDaisyToast, updateDaisyToast } from '../styles/daisy';
-import { renderSileoToast, updateSileoToast } from '../styles/wiss';
+import { renderWissToast, updateWissToast } from '../styles/wiss';
+import { renderIslandToast, updateIslandToast } from '../styles/island';
 
 const CONTAINER_ID = 'wiss-toaster';
 const ENTER_HIDDEN_CLASSES = ['opacity-0', 'translate-y-2', 'scale-95'];
@@ -58,21 +60,43 @@ function createContainer(position: Position, offset: number): HTMLDivElement {
 }
 
 function getThemeRenderer(theme: ResolvedConfig['theme']) {
-  return theme === 'daisy'
-    ? { render: renderDaisyToast, update: updateDaisyToast }
-    : { render: renderSileoToast, update: updateSileoToast };
+  if (theme === 'daisy') return { render: renderDaisyToast, update: updateDaisyToast };
+  if (theme === 'island' || theme === 'island-daisy') return { render: renderIslandToast, update: updateIslandToast };
+  return { render: renderWissToast, update: updateWissToast };
 }
 
 function animateOut(node: HTMLElement): void {
-  if (node.dataset.wissExiting === 'true') {
+  if (node.dataset.wissExiting === 'true' || node.dataset.exiting === 'true') {
     return;
   }
-  node.dataset.wissExiting = 'true';
-  node.classList.add(...ENTER_HIDDEN_CLASSES);
+  
+  if (node.hasAttribute('data-wiss-toast')) {
+    // Wiss theme (handled via wiss.css)
+    node.dataset.exiting = 'true';
+  } else if (node.classList.contains('wiss-island')) {
+    // Island theme (handled via island.css or directly via JS exit if we wanted)
+    // Actually, island doesn't have an exit transition in CSS yet, let's just fade it out using tailwind classes
+    node.classList.add(...ENTER_HIDDEN_CLASSES, 'transition-all', 'duration-300');
+    node.dataset.exiting = 'true';
+  } else {
+    // Daisy theme (handled via Tailwind classes)
+    node.dataset.wissExiting = 'true';
+    node.classList.add(...ENTER_HIDDEN_CLASSES);
+  }
 
   const remove = () => node.remove();
   node.addEventListener('transitionend', remove, { once: true });
   setTimeout(remove, EXIT_TIMEOUT_MS);
+}
+
+function playToastSound(type: ToastType) {
+  switch (type) {
+    case 'success': play('success'); break;
+    case 'error': play('press'); break;
+    case 'warning': play('chime'); break;
+    case 'info': play('droplet'); break;
+    case 'loading': play('bloom'); break;
+  }
 }
 
 function reconcile(el: HTMLDivElement, toasts: Toast[], theme: ResolvedConfig['theme']): void {
@@ -92,13 +116,25 @@ function reconcile(el: HTMLDivElement, toasts: Toast[], theme: ResolvedConfig['t
     const existing = existingById.get(toast.id);
 
     if (existing) {
+      const prevType = existing.dataset.state as ToastType;
       update(existing, toast);
+      if (prevType !== toast.type && toast.type === 'success') {
+        playToastSound('success'); // Re-play if a promise resolves successfully
+      } else if (prevType !== toast.type && toast.type === 'error') {
+        playToastSound('error');
+      }
       return;
     }
 
     const node = render(toast);
+    if (theme === 'island-daisy') {
+      node.classList.add('wiss-theme-daisy');
+    }
     node.style.pointerEvents = 'auto';
     el.appendChild(node);
+    
+    // Play enter sound
+    playToastSound(toast.type);
 
     // Double rAF: let the browser commit the hidden state before
     // removing it, otherwise the enter transition never plays.
@@ -120,6 +156,9 @@ export function initToaster(config?: WissConfig): void {
   if (config) {
     setConfig(config);
   }
+  
+  // Wire up cuelume attributes globally
+  bind();
 
   const { position, theme, offset } = getConfig();
 

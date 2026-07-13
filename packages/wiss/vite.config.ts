@@ -21,12 +21,19 @@ export default defineConfig({
         core: resolve(rootDir, 'src/core/index.ts'),
         vanilla: resolve(rootDir, 'src/vanilla/index.ts'),
         daisy: resolve(rootDir, 'src/styles/daisy.ts'),
+        island: resolve(rootDir, 'src/styles/island.ts'),
       },
       formats: ['es', 'cjs'],
       fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'js' : 'cjs'}`,
     },
     rollupOptions: {
       external: ['tailwindcss', 'daisyui'],
+      output: {
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name === 'style.css') return 'styles.css';
+          return assetInfo.name || 'styles.css';
+        },
+      },
     },
   },
 });

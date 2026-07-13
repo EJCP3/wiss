@@ -1,6 +1,7 @@
 import { getConfig } from '../core/config';
 import type { Position, Toast, ToastType } from '../core/types';
 import { getFilterId } from './gooey';
+import './wiss.css';
 
 // The whole expand/collapse geometry depends on these — don't tweak them
 // without re-checking every formula that reads them.
@@ -62,6 +63,10 @@ const STATE_ICONS: Record<ToastType, string> = {
     'Life Buoy',
     '<circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/>',
   ),
+  loading: svgIcon(
+    'Loading',
+    '<path class="wiss-spinner" d="M21 12a9 9 0 1 1-6.219-8.56"/>',
+  ),
 };
 
 function pillAlign(position: Position): PillAlign {
@@ -85,7 +90,7 @@ function resolveAutopilot(duration: number): { expandDelayMs: number; collapseDe
   };
 }
 
-interface SileoState {
+interface WissState {
   toastRef: Toast;
   isExpanded: boolean;
   pillWidth: number;
@@ -98,7 +103,7 @@ interface SileoState {
   contentRafId: number;
   autoExpandTimer: ReturnType<typeof setTimeout> | null;
   autoCollapseTimer: ReturnType<typeof setTimeout> | null;
-  hasDesc: boolean;
+  hasContent: boolean;
   align: PillAlign;
   edge: ExpandEdge;
   canvasDiv: HTMLDivElement;
@@ -111,24 +116,25 @@ interface SileoState {
   titleSpan: HTMLSpanElement;
   contentDiv: HTMLDivElement | null;
   descriptionDiv: HTMLDivElement | null;
+  actionButton: HTMLButtonElement | null;
 }
 
 // Per-instance mutable state, keyed by the root <button>. render() creates
 // it, update() looks it up.
-const instances = new WeakMap<HTMLButtonElement, SileoState>();
+const instances = new WeakMap<HTMLButtonElement, WissState>();
 
-function applyCSS(el: HTMLButtonElement, state: SileoState): void {
+function applyCSS(el: HTMLButtonElement, state: WissState): void {
   const minExpanded = HEIGHT * MIN_EXPAND_RATIO;
-  const rawExpanded = state.hasDesc
+  const rawExpanded = state.hasContent
     ? Math.max(minExpanded, HEIGHT + state.contentHeight + CONTENT_PADDING_Y)
     : minExpanded;
-  const open = state.hasDesc && state.isExpanded;
+  const open = state.hasContent && state.isExpanded;
 
   if (open) {
     state.frozenExpanded = rawExpanded;
   }
   const expanded = open ? rawExpanded : state.frozenExpanded;
-  const svgHeight = state.hasDesc ? Math.max(expanded, minExpanded) : HEIGHT;
+  const svgHeight = state.hasContent ? Math.max(expanded, minExpanded) : HEIGHT;
   const expandedContent = Math.max(0, expanded - HEIGHT);
   const resolvedPillWidth = Math.max(state.pillWidth || HEIGHT, HEIGHT);
   const pillHeight = HEIGHT + BLUR * 3;
@@ -166,7 +172,7 @@ function applyCSS(el: HTMLButtonElement, state: SileoState): void {
 
 // Measures the header's real width so the pill hugs its content instead of
 // using a fixed width.
-function measureHeader(el: HTMLButtonElement, state: SileoState): void {
+function measureHeader(el: HTMLButtonElement, state: WissState): void {
   if (state.headerPad === null || Number.isNaN(state.headerPad)) {
     const cs = getComputedStyle(state.headerDiv);
     const pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
@@ -180,7 +186,7 @@ function measureHeader(el: HTMLButtonElement, state: SileoState): void {
   }
 }
 
-function setupHeaderObserver(el: HTMLButtonElement, state: SileoState): void {
+function setupHeaderObserver(el: HTMLButtonElement, state: WissState): void {
   measureHeader(el, state);
   state.headerRO = new ResizeObserver(() => {
     cancelAnimationFrame(state.headerRafId);
@@ -189,26 +195,26 @@ function setupHeaderObserver(el: HTMLButtonElement, state: SileoState): void {
   state.headerRO.observe(state.headerInner);
 }
 
-function measureContent(el: HTMLButtonElement, state: SileoState): void {
-  if (!state.descriptionDiv) return;
-  const h = state.descriptionDiv.scrollHeight;
+function measureContent(el: HTMLButtonElement, state: WissState): void {
+  if (!state.contentDiv) return;
+  const h = state.contentDiv.scrollHeight;
   if (h !== state.contentHeight) {
     state.contentHeight = h;
     applyCSS(el, state);
   }
 }
 
-function setupContentObserver(el: HTMLButtonElement, state: SileoState): void {
-  if (!state.descriptionDiv) return;
+function setupContentObserver(el: HTMLButtonElement, state: WissState): void {
+  if (!state.contentDiv) return;
   measureContent(el, state);
   state.contentRO = new ResizeObserver(() => {
     cancelAnimationFrame(state.contentRafId);
     state.contentRafId = requestAnimationFrame(() => measureContent(el, state));
   });
-  state.contentRO.observe(state.descriptionDiv);
+  state.contentRO.observe(state.contentDiv);
 }
 
-function setExpanded(el: HTMLButtonElement, state: SileoState, value: boolean): void {
+function setExpanded(el: HTMLButtonElement, state: WissState, value: boolean): void {
   if (state.isExpanded === value) return;
   state.isExpanded = value;
   applyCSS(el, state);
@@ -216,16 +222,16 @@ function setExpanded(el: HTMLButtonElement, state: SileoState, value: boolean): 
 
 // mouseenter/mouseleave only — swipe-to-dismiss and header cross-fade are
 // out of scope for this pass.
-function setupEvents(el: HTMLButtonElement, state: SileoState): void {
+function setupEvents(el: HTMLButtonElement, state: WissState): void {
   el.addEventListener('mouseenter', () => {
-    if (state.hasDesc) setExpanded(el, state, true);
+    if (state.hasContent) setExpanded(el, state, true);
   });
   el.addEventListener('mouseleave', () => {
     setExpanded(el, state, false);
   });
 }
 
-function scheduleAutoExpandCollapse(el: HTMLButtonElement, state: SileoState, duration: number): void {
+function scheduleAutoExpandCollapse(el: HTMLButtonElement, state: WissState, duration: number): void {
   if (state.autoExpandTimer !== null) {
     clearTimeout(state.autoExpandTimer);
     state.autoExpandTimer = null;
@@ -234,7 +240,7 @@ function scheduleAutoExpandCollapse(el: HTMLButtonElement, state: SileoState, du
     clearTimeout(state.autoCollapseTimer);
     state.autoCollapseTimer = null;
   }
-  if (!state.hasDesc) return;
+  if (!state.hasContent) return;
 
   const auto = resolveAutopilot(duration);
   if (!auto) return;
@@ -250,28 +256,47 @@ function scheduleAutoExpandCollapse(el: HTMLButtonElement, state: SileoState, du
   }
 }
 
-function createContentSection(edge: ExpandEdge, description: string): {
+function createContentSection(edge: ExpandEdge, description: string, action?: { label: string; onClick: () => void }): {
   contentDiv: HTMLDivElement;
-  descriptionDiv: HTMLDivElement;
+  descriptionDiv: HTMLDivElement | null;
+  actionButton: HTMLButtonElement | null;
 } {
   const contentDiv = document.createElement('div');
   contentDiv.dataset.wissContent = '';
   contentDiv.dataset.edge = edge;
   contentDiv.dataset.visible = 'false';
 
-  const descriptionDiv = document.createElement('div');
-  descriptionDiv.dataset.wissDescription = '';
-  descriptionDiv.textContent = description;
+  let descriptionDiv = null;
+  if (description) {
+    descriptionDiv = document.createElement('div');
+    descriptionDiv.dataset.wissDescription = '';
+    descriptionDiv.textContent = description;
+    contentDiv.append(descriptionDiv);
+  }
 
-  contentDiv.append(descriptionDiv);
-  return { contentDiv, descriptionDiv };
+  let actionButton = null;
+  if (action) {
+    actionButton = document.createElement('button');
+    actionButton.dataset.wissAction = '';
+    actionButton.dataset.cuelumePress = '';
+    actionButton.dataset.cuelumeRelease = '';
+    actionButton.dataset.cuelumeHover = 'tick';
+    actionButton.textContent = action.label;
+    actionButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      action.onClick();
+    });
+    contentDiv.append(actionButton);
+  }
+
+  return { contentDiv, descriptionDiv, actionButton };
 }
 
-export function renderSileoToast(toast: Toast): HTMLElement {
+export function renderWissToast(toast: Toast): HTMLElement {
   const config = getConfig();
   const resolvedPosition = toast.position ?? config.position;
   const resolvedDuration = toast.duration ?? config.duration;
-  const hasDesc = Boolean(toast.description);
+  const hasContent = Boolean(toast.description) || Boolean(toast.action);
   const align = pillAlign(resolvedPosition);
   const edge = expandDir(resolvedPosition);
   const minExpanded = HEIGHT * MIN_EXPAND_RATIO;
@@ -295,7 +320,7 @@ export function renderSileoToast(toast: Toast): HTMLElement {
   canvasDiv.dataset.wissCanvas = '';
   canvasDiv.dataset.edge = edge;
 
-  const svgHeight = hasDesc ? minExpanded : HEIGHT;
+  const svgHeight = hasContent ? minExpanded : HEIGHT;
   const svg = createSvgElement('svg', {
     width: WIDTH,
     height: svgHeight,
@@ -344,17 +369,18 @@ export function renderSileoToast(toast: Toast): HTMLElement {
 
   el.append(canvasDiv, headerDiv);
 
-  // Only created if there's a description.
   let contentDiv: HTMLDivElement | null = null;
   let descriptionDiv: HTMLDivElement | null = null;
-  if (hasDesc) {
-    const section = createContentSection(edge, toast.description ?? '');
+  let actionButton: HTMLButtonElement | null = null;
+  if (hasContent) {
+    const section = createContentSection(edge, toast.description ?? '', toast.action);
     contentDiv = section.contentDiv;
     descriptionDiv = section.descriptionDiv;
+    actionButton = section.actionButton;
     el.append(contentDiv);
   }
 
-  const state: SileoState = {
+  const state: WissState = {
     toastRef: toast,
     isExpanded: false,
     pillWidth: 0,
@@ -367,7 +393,7 @@ export function renderSileoToast(toast: Toast): HTMLElement {
     contentRafId: 0,
     autoExpandTimer: null,
     autoCollapseTimer: null,
-    hasDesc,
+    hasContent,
     align,
     edge,
     canvasDiv,
@@ -380,13 +406,14 @@ export function renderSileoToast(toast: Toast): HTMLElement {
     titleSpan,
     contentDiv,
     descriptionDiv,
+    actionButton,
   };
 
   instances.set(el, state);
 
   applyCSS(el, state);
   setupHeaderObserver(el, state);
-  if (descriptionDiv) {
+  if (contentDiv) {
     setupContentObserver(el, state);
   }
   setupEvents(el, state);
@@ -402,17 +429,11 @@ export function renderSileoToast(toast: Toast): HTMLElement {
   return el;
 }
 
-export function updateSileoToast(el: HTMLElement, toast: Toast): void {
+export function updateWissToast(el: HTMLElement, toast: Toast): void {
   const button = el as HTMLButtonElement;
   const state = instances.get(button);
   if (!state) return;
 
-  // The vanilla adapter's reconcile() calls update() on every toast on every
-  // store change, not just the one that actually changed. Object identity
-  // tells us whether *this* toast's content changed — our store only
-  // creates a new Toast object when it's genuinely replaced (see
-  // core/store.ts addToast) — so we can skip the DOM patching below when
-  // it's just a sibling toast triggering the re-render.
   const changed = state.toastRef !== toast;
   state.toastRef = toast;
 
@@ -424,11 +445,11 @@ export function updateSileoToast(el: HTMLElement, toast: Toast): void {
   const config = getConfig();
   const resolvedPosition = toast.position ?? config.position;
   const resolvedDuration = toast.duration ?? config.duration;
-  const hasDesc = Boolean(toast.description);
+  const hasContent = Boolean(toast.description) || Boolean(toast.action);
   const align = pillAlign(resolvedPosition);
   const edge = expandDir(resolvedPosition);
 
-  state.hasDesc = hasDesc;
+  state.hasContent = hasContent;
   state.align = align;
   state.edge = edge;
 
@@ -443,21 +464,26 @@ export function updateSileoToast(el: HTMLElement, toast: Toast): void {
   state.titleSpan.dataset.state = toast.type;
   state.titleSpan.textContent = toast.message;
 
-  if (hasDesc && !state.contentDiv) {
-    const section = createContentSection(edge, toast.description ?? '');
+  if (hasContent && !state.contentDiv) {
+    const section = createContentSection(edge, toast.description ?? '', toast.action);
     state.contentDiv = section.contentDiv;
     state.descriptionDiv = section.descriptionDiv;
+    state.actionButton = section.actionButton;
     button.append(section.contentDiv);
     setupContentObserver(button, state);
-  } else if (!hasDesc && state.contentDiv) {
+  } else if (!hasContent && state.contentDiv) {
     state.contentRO?.disconnect();
     state.contentRO = null;
     state.contentDiv.remove();
     state.contentDiv = null;
     state.descriptionDiv = null;
+    state.actionButton = null;
     state.contentHeight = 0;
-  } else if (state.descriptionDiv) {
-    state.descriptionDiv.textContent = toast.description ?? '';
+  } else if (state.contentDiv) {
+    // Basic inner update for now
+    if (state.descriptionDiv) {
+      state.descriptionDiv.textContent = toast.description ?? '';
+    }
   }
 
   applyCSS(button, state);

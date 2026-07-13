@@ -3,14 +3,14 @@ import type { Position, WissConfig } from './types';
 export interface ResolvedConfig {
   position: Position;
   duration: number;
-  theme: 'sileo' | 'daisy';
+  theme: 'wiss' | 'daisy' | 'island' | 'island-daisy';
   offset: number;
 }
 
 const defaultConfig: ResolvedConfig = {
   position: 'bottom-right',
   duration: 4000,
-  theme: 'sileo',
+  theme: 'wiss',
   offset: 16,
 };
 

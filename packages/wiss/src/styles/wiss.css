@@ -70,6 +70,43 @@
 
 /* --- Canvas (pill + body SVG background) --- */
 
+[data-wiss-toast] {
+  --wiss-bg: #1c1c1e;
+  --wiss-desc-color: #d4d4d8;
+  --wiss-icon-success: #34d399;
+  --wiss-icon-error: #f87171;
+  --wiss-icon-warning: #fbbf24;
+  --wiss-icon-info: #60a5fa;
+  --wiss-title-success: #34d399;
+  --wiss-title-error: #f87171;
+  --wiss-title-warning: #fbbf24;
+  --wiss-title-info: #60a5fa;
+}
+
+[data-wiss-toast].wiss-theme-daisy {
+  --wiss-bg: oklch(var(--b3));
+}
+[data-wiss-toast].wiss-theme-daisy[data-state="success"] {
+  --wiss-icon-success: oklch(var(--su));
+  --wiss-title-success: oklch(var(--su));
+  --wiss-desc-color: oklch(var(--su));
+}
+[data-wiss-toast].wiss-theme-daisy[data-state="error"] {
+  --wiss-icon-error: oklch(var(--er));
+  --wiss-title-error: oklch(var(--er));
+  --wiss-desc-color: oklch(var(--er));
+}
+[data-wiss-toast].wiss-theme-daisy[data-state="warning"] {
+  --wiss-icon-warning: oklch(var(--wa));
+  --wiss-title-warning: oklch(var(--wa));
+  --wiss-desc-color: oklch(var(--wa));
+}
+[data-wiss-toast].wiss-theme-daisy[data-state="info"] {
+  --wiss-icon-info: oklch(var(--in));
+  --wiss-title-info: oklch(var(--in));
+  --wiss-desc-color: oklch(var(--in));
+}
+
 [data-wiss-canvas] {
   position: absolute;
   inset: 0;
@@ -92,7 +129,7 @@
 [data-wiss-pill] {
   width: var(--_pw, 40px);
   height: var(--_ph, 40px);
-  fill: #1c1c1e;
+  fill: var(--wiss-bg);
   /* --_ph is a constant (HEIGHT + blur*3) taller than the visible 40px pill
      — it exists to give the shape extra plumpness for the (future) gooey
      filter. --_sy compresses it back down to the real height: 1 when
@@ -104,15 +141,17 @@
   transition:
     width var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1),
     transform var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1),
-    x var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1);
+    x var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1),
+    fill var(--_dur, 600ms) ease;
 }
 
 [data-wiss-body] {
-  fill: #1c1c1e;
+  fill: var(--wiss-bg);
   opacity: var(--_by, 0);
   transition:
     height var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1),
-    opacity var(--_dur, 600ms) ease;
+    opacity var(--_dur, 600ms) ease,
+    fill var(--_dur, 600ms) ease;
 }
 
 /* --- Header (badge + title) --- */
@@ -150,17 +189,25 @@
   display: flex;
   flex-shrink: 0;
 }
+[data-wiss-badge] svg {
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  background-color: color-mix(in srgb, currentColor 15%, transparent);
+}
 [data-wiss-badge][data-state="success"] {
-  color: #34d399;
+  color: var(--wiss-icon-success);
 }
 [data-wiss-badge][data-state="error"] {
-  color: #f87171;
+  color: var(--wiss-icon-error);
 }
 [data-wiss-badge][data-state="warning"] {
-  color: #fbbf24;
+  color: var(--wiss-icon-warning);
 }
 [data-wiss-badge][data-state="info"] {
-  color: #60a5fa;
+  color: var(--wiss-icon-info);
 }
 
 [data-wiss-title] {
@@ -169,16 +216,16 @@
   line-height: 1;
 }
 [data-wiss-title][data-state="success"] {
-  color: #34d399;
+  color: var(--wiss-title-success);
 }
 [data-wiss-title][data-state="error"] {
-  color: #f87171;
+  color: var(--wiss-title-error);
 }
 [data-wiss-title][data-state="warning"] {
-  color: #fbbf24;
+  color: var(--wiss-title-warning);
 }
 [data-wiss-title][data-state="info"] {
-  color: #60a5fa;
+  color: var(--wiss-title-info);
 }
 
 /* --- Content (optional description) --- */
@@ -205,6 +252,38 @@
 [data-wiss-description] {
   font-size: 13px;
   line-height: 1.45;
-  color: #d4d4d8;
+  color: var(--wiss-desc-color);
   text-align: left;
+}
+
+[data-wiss-action] {
+  all: unset;
+  display: inline-block;
+  margin-top: 12px;
+  padding: 6px 14px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--wiss-title-success, #fff); /* Using a bright text var for default */
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+[data-wiss-action]:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+[data-wiss-toast].wiss-theme-daisy [data-wiss-action] {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: var(--wiss-desc-color);
+}
+[data-wiss-toast].wiss-theme-daisy [data-wiss-action]:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+@keyframes wiss-spin {
+  to { transform: rotate(360deg); }
+}
+.wiss-spinner {
+  transform-origin: center;
+  animation: wiss-spin 1s linear infinite;
 }

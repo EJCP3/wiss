@@ -18,6 +18,11 @@
       "require": "./dist/daisy.cjs",
       "types": "./dist/daisy.d.ts"
     },
+    "./island": {
+      "import": "./dist/island.js",
+      "require": "./dist/island.cjs",
+      "types": "./dist/island.d.ts"
+    },
     "./styles.css": "./dist/styles.css"
   },
   "files": [
@@ -42,8 +47,11 @@
     }
   },
   "devDependencies": {
-    "vite": "^5.4.0",
     "typescript": "^5.5.4",
+    "vite": "^5.4.0",
     "vite-plugin-dts": "^4.0.3"
+  },
+  "dependencies": {
+    "cuelume": "^0.1.0"
   }
 }

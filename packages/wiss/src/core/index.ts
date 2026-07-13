@@ -29,6 +29,34 @@ export const toast = {
   info(message: string, options?: ToastOptions): string {
     return createToast('info', message, options);
   },
+  loading(message: string, options?: ToastOptions): string {
+    return createToast('loading', message, options);
+  },
+  promise<T>(
+    promise: Promise<T>,
+    msgs: {
+      loading: string;
+      success: string | ((data: T) => string);
+      error: string | ((err: any) => string);
+    },
+    options?: ToastOptions
+  ): string {
+    const id = toast.loading(msgs.loading, { ...options, duration: 9999999 });
+    promise
+      .then((data) => {
+        toast.success(
+          typeof msgs.success === 'function' ? msgs.success(data) : msgs.success,
+          { ...options, id }
+        );
+      })
+      .catch((err) => {
+        toast.error(
+          typeof msgs.error === 'function' ? msgs.error(err) : msgs.error,
+          { ...options, id }
+        );
+      });
+    return id;
+  },
   dismiss(id: string): void {
     cancelDismiss(id);
     removeToast(id);

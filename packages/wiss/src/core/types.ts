@@ -1,4 +1,4 @@
-export type ToastType = 'success' | 'error' | 'warning' | 'info';
+export type ToastType = 'success' | 'error' | 'warning' | 'info' | 'loading';
 
 export type Position =
   | 'top-left'
@@ -8,6 +8,11 @@ export type Position =
   | 'bottom-center'
   | 'bottom-right';
 
+export interface ToastAction {
+  label: string;
+  onClick: () => void;
+}
+
 export interface Toast {
   id: string;
   message: string;
@@ -15,6 +20,7 @@ export interface Toast {
   description?: string;
   duration?: number;
   position?: Position;
+  action?: ToastAction;
 }
 
 export interface ToastOptions {
@@ -22,12 +28,13 @@ export interface ToastOptions {
   duration?: number;
   position?: Position;
   id?: string;
+  action?: ToastAction;
 }
 
 export interface WissConfig {
   position?: Position;
   duration?: number;
-  theme?: 'sileo' | 'daisy';
+  theme?: 'wiss' | 'daisy' | 'island' | 'island-daisy';
   offset?: number;
 }
 
