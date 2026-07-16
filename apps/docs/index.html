@@ -18,8 +18,11 @@
     />
   </head>
   <body
-    class="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-slate-100 to-slate-300 dark:from-zinc-900 dark:to-zinc-950 transition-colors"
+    class="min-h-screen flex items-center justify-center p-6 text-zinc-900 dark:text-zinc-100 relative"
   >
+    <div class="absolute inset-0 -z-10 h-full w-full bg-white dark:bg-zinc-950 transition-colors">
+      <div class="absolute h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#3f3f46_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
+    </div>
     <main class="w-full max-w-md space-y-6 text-center">
       <div>
         <h1 class="text-3xl font-bold text-zinc-800 dark:text-zinc-100">wiss</h1>
@@ -79,7 +82,7 @@
           data-cuelume-press data-cuelume-release data-cuelume-hover="tick"
           class="flex-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-700 transition hover:bg-zinc-200/50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800/50"
         >
-          Tema: <span id="theme-label">wiss</span>
+          Tema: <span id="theme-label">auto</span>
         </button>
         <button
           id="btn-theme-island"
@@ -92,6 +95,13 @@
 
       <div class="flex gap-2 w-full">
         <button
+          id="btn-page-theme"
+          data-cuelume-press data-cuelume-release data-cuelume-hover="tick"
+          class="flex-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-700 transition hover:bg-zinc-200/50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800/50"
+        >
+          Fondo: <span id="page-theme-label">light</span>
+        </button>
+        <button
           id="btn-progress"
           data-cuelume-press data-cuelume-release data-cuelume-hover="tick"
           class="flex-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-700 transition hover:bg-zinc-200/50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800/50"
@@ -100,16 +110,7 @@
         </button>
       </div>
 
-      <div class="pt-4 border-t border-zinc-200 dark:border-zinc-800">
-        <p class="text-xs text-zinc-500 mb-3">Probar colores DaisyUI:</p>
-        <div class="flex flex-wrap justify-center gap-2">
-          <button id="btn-daisy-light" data-cuelume-press data-cuelume-release data-cuelume-hover="tick" class="btn btn-sm btn-outline text-xs">Light</button>
-          <button id="btn-daisy-dark" data-cuelume-press data-cuelume-release data-cuelume-hover="tick" class="btn btn-sm btn-outline text-xs">Dark</button>
-          <button id="btn-daisy-cyberpunk" data-cuelume-press data-cuelume-release data-cuelume-hover="tick" class="btn btn-sm btn-outline text-xs">Cyberpunk</button>
-          <button id="btn-daisy-retro" data-cuelume-press data-cuelume-release data-cuelume-hover="tick" class="btn btn-sm btn-outline text-xs">Retro</button>
-          <button id="btn-daisy-synthwave" data-cuelume-press data-cuelume-release data-cuelume-hover="tick" class="btn btn-sm btn-outline text-xs">Synthwave</button>
-        </div>
-      </div>
+
     </main>
 
     <script type="module" src="/src/main.ts"></script>

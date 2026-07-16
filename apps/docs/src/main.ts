@@ -3,18 +3,14 @@ import { initToaster } from '@ejcp/wiss/vanilla';
 import type { WissConfig } from '@ejcp/wiss';
 import '@ejcp/wiss/styles.css';
 
-const root = document.documentElement;
 const themeLabel = document.getElementById('theme-label');
 
-let colorTheme: 'wiss' | 'daisy' = 'wiss';
+let colorTheme: 'light' | 'dark' | 'auto' = 'auto';
 let format: 'classic' | 'island' = 'classic';
+let pageTheme: 'light' | 'dark' = 'light';
 let showProgressBar: boolean = false;
 
 function applyTheme(): void {
-  const resolvedTheme = format === 'island' 
-    ? (colorTheme === 'daisy' ? 'island-daisy' : 'island') 
-    : colorTheme;
-
   if (themeLabel) {
     themeLabel.textContent = colorTheme;
   }
@@ -22,10 +18,24 @@ function applyTheme(): void {
   if (formatLabel) {
     formatLabel.textContent = format;
   }
+  const pageThemeLabel = document.getElementById('page-theme-label');
+  if (pageThemeLabel) {
+    pageThemeLabel.textContent = pageTheme;
+  }
+
+  if (pageTheme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+
+  const actualToastTheme = colorTheme === 'auto' 
+    ? (pageTheme === 'light' ? 'dark' : 'light') 
+    : colorTheme;
 
   // Evita mezclar nodos ya renderizados con el tema anterior.
   toast.clear();
-  initToaster({ theme: resolvedTheme, position: 'top-center', duration: 4000, progressBar: showProgressBar });
+  initToaster({ theme: actualToastTheme, format, position: 'top-center', duration: 4000, progressBar: showProgressBar });
 }
 
 document.getElementById('btn-success')?.addEventListener('click', () => {
@@ -83,7 +93,14 @@ document.getElementById('btn-promise')?.addEventListener('click', () => {
 });
 
 document.getElementById('btn-theme')?.addEventListener('click', () => {
-  colorTheme = colorTheme === 'wiss' ? 'daisy' : 'wiss';
+  if (colorTheme === 'light') colorTheme = 'dark';
+  else if (colorTheme === 'dark') colorTheme = 'auto';
+  else colorTheme = 'light';
+  applyTheme();
+});
+
+document.getElementById('btn-page-theme')?.addEventListener('click', () => {
+  pageTheme = pageTheme === 'light' ? 'dark' : 'light';
   applyTheme();
 });
 
@@ -101,24 +118,6 @@ document.getElementById('btn-progress')?.addEventListener('click', () => {
   applyTheme();
 });
 
-const setHtmlTheme = (themeName: string, isDark: boolean = false) => {
-  document.documentElement.setAttribute('data-theme', themeName);
-  if (isDark) {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
-  }
-  
-  if (colorTheme !== 'daisy') {
-    colorTheme = 'daisy';
-    applyTheme();
-  }
-};
 
-document.getElementById('btn-daisy-light')?.addEventListener('click', () => setHtmlTheme('light', false));
-document.getElementById('btn-daisy-dark')?.addEventListener('click', () => setHtmlTheme('dark', true));
-document.getElementById('btn-daisy-cyberpunk')?.addEventListener('click', () => setHtmlTheme('cyberpunk', false));
-document.getElementById('btn-daisy-retro')?.addEventListener('click', () => setHtmlTheme('retro', false));
-document.getElementById('btn-daisy-synthwave')?.addEventListener('click', () => setHtmlTheme('synthwave', true));
 
 applyTheme();

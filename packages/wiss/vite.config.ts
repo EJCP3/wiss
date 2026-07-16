@@ -20,7 +20,6 @@ export default defineConfig({
       entry: {
         core: resolve(rootDir, 'src/core/index.ts'),
         vanilla: resolve(rootDir, 'src/vanilla/index.ts'),
-        daisy: resolve(rootDir, 'src/styles/daisy.ts'),
         island: resolve(rootDir, 'src/styles/island.ts'),
       },
       formats: ['es', 'cjs'],

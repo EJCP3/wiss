@@ -36,7 +36,8 @@ export interface ToastOptions {
 export interface WissConfig {
   position?: Position;
   duration?: number;
-  theme?: 'wiss' | 'daisy' | 'island' | 'island-daisy';
+  theme?: 'light' | 'dark';
+  format?: 'classic' | 'island';
   offset?: number;
   progressBar?: boolean;
 }

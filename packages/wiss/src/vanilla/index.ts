@@ -4,7 +4,6 @@ import { getConfig, setConfig } from '../core/config';
 import { subscribe } from '../core/store';
 import { pauseAll, resumeAll } from '../core/timers';
 import type { Position, Toast, ToastType, WissConfig } from '../core/types';
-import { renderDaisyToast, updateDaisyToast } from '../styles/daisy';
 import { renderWissToast, updateWissToast, closeWissToast } from '../styles/wiss';
 import { renderIslandToast, updateIslandToast, closeIslandToast } from '../styles/island';
 import { setupSwipe } from './swipe';
@@ -60,9 +59,8 @@ function createContainer(position: Position, offset: number): HTMLDivElement {
   return el;
 }
 
-function getThemeRenderer(theme: ResolvedConfig['theme']) {
-  if (theme === 'daisy') return { render: renderDaisyToast, update: updateDaisyToast };
-  if (theme === 'island' || theme === 'island-daisy') return { render: renderIslandToast, update: updateIslandToast };
+function getThemeRenderer(format: ResolvedConfig['format']) {
+  if (format === 'island') return { render: renderIslandToast, update: updateIslandToast };
   return { render: renderWissToast, update: updateWissToast };
 }
 
@@ -110,8 +108,8 @@ function playToastSound(type: ToastType) {
   }
 }
 
-function reconcile(el: HTMLDivElement, toasts: Toast[], theme: ResolvedConfig['theme']): void {
-  const { render, update } = getThemeRenderer(theme);
+function reconcile(el: HTMLDivElement, toasts: Toast[], config: ResolvedConfig): void {
+  const { render, update } = getThemeRenderer(config.format);
 
   const existingById = new Map<string, HTMLElement>();
   Array.from(el.children).forEach((child) => {
@@ -138,8 +136,8 @@ function reconcile(el: HTMLDivElement, toasts: Toast[], theme: ResolvedConfig['t
     }
 
     const node = render(toast);
-    if (theme === 'island-daisy') {
-      node.classList.add('wiss-theme-daisy');
+    if (config.theme === 'light') {
+      node.classList.add('wiss-theme-light');
     }
     node.style.pointerEvents = 'auto';
     el.appendChild(node);
@@ -185,7 +183,7 @@ export function initToaster(config?: WissConfig): void {
   if (!unsubscribeStore) {
     const activeContainer = container;
     unsubscribeStore = subscribe((toasts) => {
-      reconcile(activeContainer, toasts, getConfig().theme);
+      reconcile(activeContainer, toasts, getConfig());
     });
   }
 }

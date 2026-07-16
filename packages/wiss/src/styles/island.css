@@ -162,27 +162,23 @@
 /* Dynamic background based on text color */
 .wiss-island .island-icon svg { background-color: color-mix(in srgb, currentColor 15%, transparent); }
 
-/* DaisyUI semantic colors (applied when .wiss-theme-daisy is present) */
-.wiss-island.wiss-theme-daisy {
-  background: oklch(var(--b3));
-  border-color: oklch(var(--b3));
+/* Light theme */
+.wiss-island.wiss-theme-light {
+  background: #ffffff;
+  border-color: #e4e4e7;
+  color: #18181b;
 }
-.wiss-island.wiss-theme-daisy[data-state="success"] { color: oklch(var(--su)); }
-.wiss-island.wiss-theme-daisy[data-state="error"] { color: oklch(var(--er)); }
-.wiss-island.wiss-theme-daisy[data-state="warning"] { color: oklch(var(--wa)); }
-.wiss-island.wiss-theme-daisy[data-state="info"] { color: oklch(var(--in)); }
-.wiss-island.wiss-theme-daisy[data-state="loading"] { color: oklch(var(--p)); }
 
-.wiss-island.wiss-theme-daisy .island-icon { color: inherit; }
-.wiss-island.wiss-theme-daisy .island-icon svg { background-color: color-mix(in srgb, currentColor 15%, transparent); }
-.wiss-island.wiss-theme-daisy .island-desc { color: inherit; opacity: 0.9; }
-
-.wiss-island.wiss-theme-daisy .island-action {
-  background-color: color-mix(in srgb, currentColor 10%, transparent);
-  color: inherit;
+.wiss-island.wiss-theme-light .island-desc {
+  color: #52525b;
 }
-.wiss-island.wiss-theme-daisy .island-action:hover {
-  background-color: color-mix(in srgb, currentColor 20%, transparent);
+
+.wiss-island.wiss-theme-light .island-action {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #18181b;
+}
+.wiss-island.wiss-theme-light .island-action:hover {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 @keyframes island-spin {

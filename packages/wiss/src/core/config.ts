@@ -3,7 +3,8 @@ import type { Position, WissConfig } from './types';
 export interface ResolvedConfig {
   position: Position;
   duration: number;
-  theme: 'wiss' | 'daisy' | 'island' | 'island-daisy';
+  theme: 'light' | 'dark';
+  format: 'classic' | 'island';
   offset: number;
   progressBar: boolean;
 }
@@ -11,7 +12,8 @@ export interface ResolvedConfig {
 const defaultConfig: ResolvedConfig = {
   position: 'bottom-right',
   duration: 4000,
-  theme: 'wiss',
+  theme: 'dark',
+  format: 'classic',
   offset: 16,
   progressBar: false,
 };
@@ -27,6 +29,7 @@ export function setConfig(next: WissConfig): void {
     position: next.position ?? config.position,
     duration: next.duration ?? config.duration,
     theme: next.theme ?? config.theme,
+    format: next.format ?? config.format,
     offset: next.offset ?? config.offset,
     progressBar: next.progressBar ?? config.progressBar,
   };

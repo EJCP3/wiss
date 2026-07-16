@@ -46,6 +46,7 @@
     sans-serif;
   border-radius: 18px;
   transition: height var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1);
+  color: #fff;
 }
 
 [data-wiss-toast][data-ready="false"] {
@@ -125,28 +126,20 @@
 [data-wiss-toast][data-state="warning"] { --wiss-progress-color: var(--wiss-title-warning); }
 [data-wiss-toast][data-state="info"] { --wiss-progress-color: var(--wiss-title-info); }
 
-[data-wiss-toast].wiss-theme-daisy {
-  --wiss-bg: oklch(var(--b3));
+[data-wiss-toast].wiss-theme-light {
+  --wiss-bg: #ffffff;
+  --wiss-desc-color: #52525b;
+  --wiss-icon-success: #10b981;
+  --wiss-icon-error: #ef4444;
+  --wiss-icon-warning: #f59e0b;
+  --wiss-icon-info: #3b82f6;
+  --wiss-title-success: #059669;
+  --wiss-title-error: #dc2626;
+  --wiss-title-warning: #d97706;
+  --wiss-title-info: #2563eb;
 }
-[data-wiss-toast].wiss-theme-daisy[data-state="success"] {
-  --wiss-icon-success: oklch(var(--su));
-  --wiss-title-success: oklch(var(--su));
-  --wiss-desc-color: oklch(var(--su));
-}
-[data-wiss-toast].wiss-theme-daisy[data-state="error"] {
-  --wiss-icon-error: oklch(var(--er));
-  --wiss-title-error: oklch(var(--er));
-  --wiss-desc-color: oklch(var(--er));
-}
-[data-wiss-toast].wiss-theme-daisy[data-state="warning"] {
-  --wiss-icon-warning: oklch(var(--wa));
-  --wiss-title-warning: oklch(var(--wa));
-  --wiss-desc-color: oklch(var(--wa));
-}
-[data-wiss-toast].wiss-theme-daisy[data-state="info"] {
-  --wiss-icon-info: oklch(var(--in));
-  --wiss-title-info: oklch(var(--in));
-  --wiss-desc-color: oklch(var(--in));
+[data-wiss-toast].wiss-theme-light [data-wiss-title] {
+  color: #18181b;
 }
 
 [data-wiss-canvas] {
@@ -314,12 +307,12 @@
 [data-wiss-action]:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
-[data-wiss-toast].wiss-theme-daisy [data-wiss-action] {
-  background-color: rgba(0, 0, 0, 0.1);
-  color: var(--wiss-desc-color);
+[data-wiss-toast].wiss-theme-light [data-wiss-action] {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #18181b;
 }
-[data-wiss-toast].wiss-theme-daisy [data-wiss-action]:hover {
-  background-color: rgba(0, 0, 0, 0.2);
+[data-wiss-toast].wiss-theme-light [data-wiss-action]:hover {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 @keyframes wiss-spin {

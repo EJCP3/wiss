@@ -21,11 +21,6 @@
       "require": "./dist/vanilla.cjs",
       "types": "./dist/vanilla.d.ts"
     },
-    "./daisy": {
-      "import": "./dist/daisy.js",
-      "require": "./dist/daisy.cjs",
-      "types": "./dist/daisy.d.ts"
-    },
     "./island": {
       "import": "./dist/island.js",
       "require": "./dist/island.cjs",
