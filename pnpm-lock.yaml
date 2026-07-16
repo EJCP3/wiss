@@ -23,7 +23,7 @@ importers:
 
   apps/docs:
     dependencies:
-      wiss:
+      '@ejcp/wiss':
         specifier: workspace:*
         version: link:../../packages/wiss
     devDependencies:

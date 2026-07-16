@@ -1,6 +1,14 @@
 {
-  "name": "wiss",
-  "version": "0.1.0",
+  "name": "@ejcp/wiss",
+  "version": "0.1.2",
+  "description": "Librería de notificaciones toast minimalista, personalizable y bonita",
+  "keywords": ["toast", "notification", "alert", "vanilla", "daisyui", "tailwind"],
+  "author": "EJCP",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EJCP3/wiss.git"
+  },
   "type": "module",
   "exports": {
     ".": {

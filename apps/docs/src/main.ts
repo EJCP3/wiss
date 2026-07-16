@@ -1,7 +1,7 @@
-import { toast } from 'wiss';
-import { initToaster } from 'wiss/vanilla';
-import type { WissConfig } from 'wiss';
-import 'wiss/styles.css';
+import { toast } from '@ejcp/wiss';
+import { initToaster } from '@ejcp/wiss/vanilla';
+import type { WissConfig } from '@ejcp/wiss';
+import '@ejcp/wiss/styles.css';
 
 const root = document.documentElement;
 const themeLabel = document.getElementById('theme-label');
