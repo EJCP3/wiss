@@ -1,8 +1,8 @@
 {
   "name": "@ejcp/wiss",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Librería de notificaciones toast minimalista, personalizable y bonita",
-  "keywords": ["toast", "notification", "alert", "vanilla", "daisyui", "tailwind"],
+  "keywords": ["toast", "notification", "alert", "vanilla", "tailwind"],
   "author": "EJCP",
   "license": "MIT",
   "repository": {
@@ -38,13 +38,9 @@
     "playground": "vite --open /playground/sileo-test.html"
   },
   "peerDependencies": {
-    "daisyui": ">=4",
     "tailwindcss": ">=3"
   },
   "peerDependenciesMeta": {
-    "daisyui": {
-      "optional": true
-    },
     "tailwindcss": {
       "optional": true
     }
