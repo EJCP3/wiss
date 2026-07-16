@@ -21,6 +21,7 @@ export interface Toast {
   duration?: number;
   position?: Position;
   action?: ToastAction;
+  progressBar?: boolean;
 }
 
 export interface ToastOptions {
@@ -29,6 +30,7 @@ export interface ToastOptions {
   position?: Position;
   id?: string;
   action?: ToastAction;
+  progressBar?: boolean;
 }
 
 export interface WissConfig {
@@ -36,6 +38,7 @@ export interface WissConfig {
   duration?: number;
   theme?: 'wiss' | 'daisy' | 'island' | 'island-daisy';
   offset?: number;
+  progressBar?: boolean;
 }
 
 export type Listener = (toasts: Toast[]) => void;

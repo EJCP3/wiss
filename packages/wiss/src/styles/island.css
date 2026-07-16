@@ -18,7 +18,42 @@
               height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   pointer-events: auto;
+  touch-action: pan-y;
 }
+.wiss-island[data-exiting="true"] {
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+              height 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* --- Progress Bar --- */
+.wiss-island[data-state="success"] { --wiss-progress-color: #10b981; }
+.wiss-island[data-state="error"] { --wiss-progress-color: #ef4444; }
+.wiss-island[data-state="warning"] { --wiss-progress-color: #f59e0b; }
+.wiss-island[data-state="info"] { --wiss-progress-color: #3b82f6; }
+.wiss-island[data-state="loading"] { --wiss-progress-color: #a855f7; }
+
+.wiss-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background-color: var(--wiss-progress-color, #fff);
+  opacity: 0.8;
+  width: 100%;
+  transform-origin: left;
+  animation: wiss-progress linear forwards;
+  z-index: 50;
+  pointer-events: none;
+}
+.wiss-island:hover .wiss-progress-bar {
+  animation-play-state: paused;
+}
+@keyframes wiss-progress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+
 .wiss-island:hover {
   border-color: #3f3f46;
 }

@@ -5,6 +5,7 @@ export interface ResolvedConfig {
   duration: number;
   theme: 'wiss' | 'daisy' | 'island' | 'island-daisy';
   offset: number;
+  progressBar: boolean;
 }
 
 const defaultConfig: ResolvedConfig = {
@@ -12,6 +13,7 @@ const defaultConfig: ResolvedConfig = {
   duration: 4000,
   theme: 'wiss',
   offset: 16,
+  progressBar: false,
 };
 
 let config: ResolvedConfig = { ...defaultConfig };
@@ -26,5 +28,6 @@ export function setConfig(next: WissConfig): void {
     duration: next.duration ?? config.duration,
     theme: next.theme ?? config.theme,
     offset: next.offset ?? config.offset,
+    progressBar: next.progressBar ?? config.progressBar,
   };
 }

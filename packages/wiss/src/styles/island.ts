@@ -24,7 +24,6 @@ interface IslandState {
   contentWidth: number;
   contentHeight: number;
   stageTimer: ReturnType<typeof setTimeout> | null;
-  autoCollapseTimer: ReturnType<typeof setTimeout> | null;
   contentDiv: HTMLDivElement;
   titleDiv: HTMLDivElement;
   descDiv: HTMLDivElement | null;
@@ -79,7 +78,6 @@ function setStage(el: HTMLButtonElement, state: IslandState, newStage: 0 | 1 | 2
 
 function scheduleAutopilot(el: HTMLButtonElement, state: IslandState, duration: number): void {
   if (state.stageTimer) clearTimeout(state.stageTimer);
-  if (state.autoCollapseTimer) clearTimeout(state.autoCollapseTimer);
 
   // Animate to Stage 1, then Stage 2
   state.stageTimer = setTimeout(() => {
@@ -93,11 +91,6 @@ function scheduleAutopilot(el: HTMLButtonElement, state: IslandState, duration: 
       setStage(el, state, 1); // wait, it's already 1, this is fine
     }
   }, AUTO_EXPAND_DELAY_MS);
-  
-  if (duration > 0 && Number.isFinite(duration)) {
-    const collapseDelay = Math.min(duration, Math.max(0, AUTO_COLLAPSE_DELAY_MS));
-    state.autoCollapseTimer = setTimeout(() => setStage(el, state, 0), collapseDelay);
-  }
 }
 
 export function renderIslandToast(toast: Toast): HTMLElement {
@@ -147,6 +140,14 @@ export function renderIslandToast(toast: Toast): HTMLElement {
 
   el.append(iconContainer, contentDiv);
 
+  const showProgressBar = toast.progressBar ?? getConfig().progressBar;
+  if (showProgressBar) {
+    const progressBar = document.createElement('div');
+    progressBar.className = 'wiss-progress-bar';
+    progressBar.style.animationDuration = `${resolvedDuration}ms`;
+    el.append(progressBar);
+  }
+
   const state: IslandState = {
     toastRef: toast,
     stage: 0,
@@ -154,7 +155,6 @@ export function renderIslandToast(toast: Toast): HTMLElement {
     contentWidth: 0,
     contentHeight: 0,
     stageTimer: null,
-    autoCollapseTimer: null,
     contentDiv,
     titleDiv,
     descDiv,
@@ -175,13 +175,6 @@ export function renderIslandToast(toast: Toast): HTMLElement {
     if (state.stage === 0) return; // Don't expand if fully closed
     const maxStage = (state.descDiv || state.actionBtn) ? 2 : 1;
     setStage(el, state, maxStage);
-    if (state.autoCollapseTimer) clearTimeout(state.autoCollapseTimer);
-  });
-  el.addEventListener('mouseleave', () => {
-    // Resume auto collapse if hovering leaves
-    if (state.stage !== 0) {
-      scheduleAutopilot(el, state, resolvedDuration);
-    }
   });
 
   requestAnimationFrame(() => {
@@ -242,4 +235,28 @@ export function updateIslandToast(el: HTMLElement, toast: Toast): void {
 
   measure(button, state);
   scheduleAutopilot(button, state, resolvedDuration);
+}
+
+export function closeIslandToast(el: HTMLElement, onComplete: () => void): void {
+  const button = el as HTMLButtonElement;
+  const state = instances.get(button);
+  if (!state) {
+    onComplete();
+    return;
+  }
+  
+  if (state.stageTimer) clearTimeout(state.stageTimer);
+  
+  if (state.stage === 2) {
+    setStage(button, state, 1);
+    setTimeout(() => {
+      setStage(button, state, 0);
+      setTimeout(onComplete, 400); // Wait 400ms for width transition to finish
+    }, 400); // 400ms for height
+  } else if (state.stage === 1) {
+    setStage(button, state, 0);
+    setTimeout(onComplete, 400); // Wait 400ms for width transition to finish
+  } else {
+    onComplete();
+  }
 }

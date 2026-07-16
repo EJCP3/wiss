@@ -102,7 +102,6 @@ interface WissState {
   headerRafId: number;
   contentRafId: number;
   autoExpandTimer: ReturnType<typeof setTimeout> | null;
-  autoCollapseTimer: ReturnType<typeof setTimeout> | null;
   hasContent: boolean;
   align: PillAlign;
   edge: ExpandEdge;
@@ -146,9 +145,14 @@ function applyCSS(el: HTMLButtonElement, state: WissState): void {
         : 0;
 
   const s = el.style;
+  const visibleWidth = open ? WIDTH : resolvedPillWidth;
+  const visibleX = open ? 0 : pillX;
+  
   s.setProperty('--_h', `${open ? expanded : HEIGHT}px`);
   s.setProperty('--_pw', `${resolvedPillWidth}px`);
   s.setProperty('--_px', `${pillX}px`);
+  s.setProperty('--_vw', `${visibleWidth}px`);
+  s.setProperty('--_vx', `${visibleX}px`);
   s.setProperty('--_sy', `${open ? 1 : HEIGHT / pillHeight}`);
   s.setProperty('--_ph', `${pillHeight}px`);
   s.setProperty('--_by', `${open ? 1 : 0}`);
@@ -236,10 +240,6 @@ function scheduleAutoExpandCollapse(el: HTMLButtonElement, state: WissState, dur
     clearTimeout(state.autoExpandTimer);
     state.autoExpandTimer = null;
   }
-  if (state.autoCollapseTimer !== null) {
-    clearTimeout(state.autoCollapseTimer);
-    state.autoCollapseTimer = null;
-  }
   if (!state.hasContent) return;
 
   const auto = resolveAutopilot(duration);
@@ -249,10 +249,6 @@ function scheduleAutoExpandCollapse(el: HTMLButtonElement, state: WissState, dur
     state.autoExpandTimer = setTimeout(() => setExpanded(el, state, true), auto.expandDelayMs);
   } else {
     setExpanded(el, state, true);
-  }
-
-  if (auto.collapseDelayMs > 0) {
-    state.autoCollapseTimer = setTimeout(() => setExpanded(el, state, false), auto.collapseDelayMs);
   }
 }
 
@@ -369,6 +365,19 @@ export function renderWissToast(toast: Toast): HTMLElement {
 
   el.append(canvasDiv, headerDiv);
 
+  const showProgressBar = toast.progressBar ?? config.progressBar;
+  if (showProgressBar) {
+    const progressWrapper = document.createElement('div');
+    progressWrapper.className = 'wiss-progress-wrapper';
+    
+    const progressBar = document.createElement('div');
+    progressBar.className = 'wiss-progress-bar';
+    progressBar.style.animationDuration = `${resolvedDuration}ms`;
+    
+    progressWrapper.append(progressBar);
+    el.append(progressWrapper);
+  }
+
   let contentDiv: HTMLDivElement | null = null;
   let descriptionDiv: HTMLDivElement | null = null;
   let actionButton: HTMLButtonElement | null = null;
@@ -392,7 +401,6 @@ export function renderWissToast(toast: Toast): HTMLElement {
     headerRafId: 0,
     contentRafId: 0,
     autoExpandTimer: null,
-    autoCollapseTimer: null,
     hasContent,
     align,
     edge,
@@ -488,4 +496,22 @@ export function updateWissToast(el: HTMLElement, toast: Toast): void {
 
   applyCSS(button, state);
   scheduleAutoExpandCollapse(button, state, resolvedDuration);
+}
+
+export function closeWissToast(el: HTMLElement, onComplete: () => void): void {
+  const button = el as HTMLButtonElement;
+  const state = instances.get(button);
+  if (!state) {
+    onComplete();
+    return;
+  }
+  
+  if (state.autoExpandTimer) clearTimeout(state.autoExpandTimer);
+  
+  if (state.isExpanded) {
+    setExpanded(button, state, false);
+    setTimeout(onComplete, 600); // Match --_dur transition
+  } else {
+    onComplete();
+  }
 }

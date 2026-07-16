@@ -8,6 +8,7 @@ const themeLabel = document.getElementById('theme-label');
 
 let colorTheme: 'wiss' | 'daisy' = 'wiss';
 let format: 'classic' | 'island' = 'classic';
+let showProgressBar: boolean = false;
 
 function applyTheme(): void {
   const resolvedTheme = format === 'island' 
@@ -24,7 +25,7 @@ function applyTheme(): void {
 
   // Evita mezclar nodos ya renderizados con el tema anterior.
   toast.clear();
-  initToaster({ theme: resolvedTheme, position: 'top-center', duration: 4000 });
+  initToaster({ theme: resolvedTheme, position: 'top-center', duration: 4000, progressBar: showProgressBar });
 }
 
 document.getElementById('btn-success')?.addEventListener('click', () => {
@@ -88,6 +89,15 @@ document.getElementById('btn-theme')?.addEventListener('click', () => {
 
 document.getElementById('btn-theme-island')?.addEventListener('click', () => {
   format = format === 'classic' ? 'island' : 'classic';
+  applyTheme();
+});
+
+document.getElementById('btn-progress')?.addEventListener('click', () => {
+  showProgressBar = !showProgressBar;
+  const label = document.getElementById('progress-label');
+  if (label) {
+    label.textContent = showProgressBar ? 'Visible' : 'Oculto';
+  }
   applyTheme();
 });
 

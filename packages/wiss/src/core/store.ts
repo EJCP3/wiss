@@ -26,6 +26,7 @@ export function addToast(message: string, type: ToastType, options: ToastOptions
     ...(options.duration !== undefined ? { duration: options.duration } : {}),
     ...(options.position !== undefined ? { position: options.position } : {}),
     ...(options.action !== undefined ? { action: options.action } : {}),
+    ...(options.progressBar !== undefined ? { progressBar: options.progressBar } : {}),
   };
 
   const existingIndex = toasts.findIndex((t) => t.id === id);

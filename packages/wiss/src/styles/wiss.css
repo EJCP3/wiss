@@ -37,12 +37,14 @@
      clipping, both would paint outside the collapsed --_h box. */
   overflow: hidden;
   cursor: pointer;
+  touch-action: pan-y;
   font-family:
     system-ui,
     -apple-system,
     "Segoe UI",
     Roboto,
     sans-serif;
+  border-radius: 18px;
   transition: height var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -68,6 +70,41 @@
     transform 200ms ease;
 }
 
+/* --- Progress Bar --- */
+.wiss-progress-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--_vw, 40px);
+  height: 100%;
+  transform: translateX(var(--_vx, 0px));
+  transition:
+    width var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1),
+    transform var(--_dur, 600ms) cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 50;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 18px;
+}
+.wiss-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--wiss-progress-color, #fff);
+  opacity: 0.8;
+  transform-origin: left;
+  animation: wiss-progress linear forwards;
+}
+[data-wiss-toaster]:hover .wiss-progress-bar {
+  animation-play-state: paused;
+}
+@keyframes wiss-progress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
 /* --- Canvas (pill + body SVG background) --- */
 
 [data-wiss-toast] {
@@ -82,6 +119,11 @@
   --wiss-title-warning: #fbbf24;
   --wiss-title-info: #60a5fa;
 }
+
+[data-wiss-toast][data-state="success"] { --wiss-progress-color: var(--wiss-title-success); }
+[data-wiss-toast][data-state="error"] { --wiss-progress-color: var(--wiss-title-error); }
+[data-wiss-toast][data-state="warning"] { --wiss-progress-color: var(--wiss-title-warning); }
+[data-wiss-toast][data-state="info"] { --wiss-progress-color: var(--wiss-title-info); }
 
 [data-wiss-toast].wiss-theme-daisy {
   --wiss-bg: oklch(var(--b3));

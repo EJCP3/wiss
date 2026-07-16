@@ -5,8 +5,9 @@ import { subscribe } from '../core/store';
 import { pauseAll, resumeAll } from '../core/timers';
 import type { Position, Toast, ToastType, WissConfig } from '../core/types';
 import { renderDaisyToast, updateDaisyToast } from '../styles/daisy';
-import { renderWissToast, updateWissToast } from '../styles/wiss';
-import { renderIslandToast, updateIslandToast } from '../styles/island';
+import { renderWissToast, updateWissToast, closeWissToast } from '../styles/wiss';
+import { renderIslandToast, updateIslandToast, closeIslandToast } from '../styles/island';
+import { setupSwipe } from './swipe';
 
 const CONTAINER_ID = 'wiss-toaster';
 const ENTER_HIDDEN_CLASSES = ['opacity-0', 'translate-y-2', 'scale-95'];
@@ -72,12 +73,22 @@ function animateOut(node: HTMLElement): void {
   
   if (node.hasAttribute('data-wiss-toast')) {
     // Wiss theme (handled via wiss.css)
-    node.dataset.exiting = 'true';
+    closeWissToast(node, () => {
+      node.dataset.exiting = 'true';
+      const remove = () => node.remove();
+      node.addEventListener('transitionend', remove, { once: true });
+      setTimeout(remove, EXIT_TIMEOUT_MS);
+    });
+    return;
   } else if (node.classList.contains('wiss-island')) {
-    // Island theme (handled via island.css or directly via JS exit if we wanted)
-    // Actually, island doesn't have an exit transition in CSS yet, let's just fade it out using tailwind classes
-    node.classList.add(...ENTER_HIDDEN_CLASSES, 'transition-all', 'duration-300');
     node.dataset.exiting = 'true';
+    closeIslandToast(node, () => {
+      node.classList.add(...ENTER_HIDDEN_CLASSES, 'transition-all', 'duration-300');
+      const remove = () => node.remove();
+      node.addEventListener('transitionend', remove, { once: true });
+      setTimeout(remove, EXIT_TIMEOUT_MS);
+    });
+    return;
   } else {
     // Daisy theme (handled via Tailwind classes)
     node.dataset.wissExiting = 'true';
@@ -166,6 +177,7 @@ export function initToaster(config?: WissConfig): void {
     container = createContainer(position, offset);
     container.addEventListener('mouseenter', pauseAll);
     container.addEventListener('mouseleave', resumeAll);
+    setupSwipe(container);
   } else {
     applyContainerPosition(container, position, offset);
   }
