@@ -177,6 +177,11 @@ export function renderIslandToast(toast: Toast): HTMLElement {
     setStage(el, state, maxStage);
   });
 
+  el.addEventListener('wiss:collapse', () => {
+    if (state.stageTimer) clearTimeout(state.stageTimer);
+    setStage(el, state, 0);
+  });
+
   requestAnimationFrame(() => {
     scheduleAutopilot(el, state, resolvedDuration);
   });
@@ -231,6 +236,19 @@ export function updateIslandToast(el: HTMLElement, toast: Toast): void {
     state.actionBtn = null;
   } else if (state.actionBtn && toast.action) {
     state.actionBtn.textContent = toast.action.label;
+  }
+
+  const showProgressBar = toast.progressBar ?? getConfig().progressBar;
+  let progressBar = button.querySelector('.wiss-progress-bar');
+  
+  if (showProgressBar) {
+    if (progressBar) progressBar.remove();
+    progressBar = document.createElement('div');
+    progressBar.className = 'wiss-progress-bar';
+    progressBar.style.animationDuration = `${resolvedDuration}ms`;
+    button.append(progressBar);
+  } else if (progressBar) {
+    progressBar.remove();
   }
 
   measure(button, state);

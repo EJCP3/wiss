@@ -9,6 +9,7 @@ let colorTheme: 'light' | 'dark' | 'auto' = 'auto';
 let format: 'classic' | 'island' = 'classic';
 let pageTheme: 'light' | 'dark' = 'light';
 let showProgressBar: boolean = false;
+let replaceBehavior: 'normal' | 'metamorphosis' = 'normal';
 
 function applyTheme(): void {
   if (themeLabel) {
@@ -35,7 +36,14 @@ function applyTheme(): void {
 
   // Evita mezclar nodos ya renderizados con el tema anterior.
   toast.clear();
-  initToaster({ theme: actualToastTheme, format, position: 'top-center', duration: 4000, progressBar: showProgressBar });
+  initToaster({ 
+    theme: actualToastTheme, 
+    format, 
+    position: 'top-center', 
+    duration: 4000, 
+    progressBar: showProgressBar,
+    replaceBehavior
+  });
 }
 
 document.getElementById('btn-success')?.addEventListener('click', () => {
@@ -114,6 +122,15 @@ document.getElementById('btn-progress')?.addEventListener('click', () => {
   const label = document.getElementById('progress-label');
   if (label) {
     label.textContent = showProgressBar ? 'Visible' : 'Oculto';
+  }
+  applyTheme();
+});
+
+document.getElementById('btn-replace')?.addEventListener('click', () => {
+  replaceBehavior = replaceBehavior === 'normal' ? 'metamorphosis' : 'normal';
+  const label = document.getElementById('replace-label');
+  if (label) {
+    label.textContent = replaceBehavior;
   }
   applyTheme();
 });

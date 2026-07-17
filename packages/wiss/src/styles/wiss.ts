@@ -233,6 +233,9 @@ function setupEvents(el: HTMLButtonElement, state: WissState): void {
   el.addEventListener('mouseleave', () => {
     setExpanded(el, state, false);
   });
+  el.addEventListener('wiss:collapse', () => {
+    setExpanded(el, state, false);
+  });
 }
 
 function scheduleAutoExpandCollapse(el: HTMLButtonElement, state: WissState, duration: number): void {
@@ -492,6 +495,24 @@ export function updateWissToast(el: HTMLElement, toast: Toast): void {
     if (state.descriptionDiv) {
       state.descriptionDiv.textContent = toast.description ?? '';
     }
+  }
+
+  const showProgressBar = toast.progressBar ?? config.progressBar;
+  let progressWrapper = button.querySelector('.wiss-progress-wrapper');
+  
+  if (showProgressBar) {
+    if (progressWrapper) progressWrapper.remove(); // Force restart
+    progressWrapper = document.createElement('div');
+    progressWrapper.className = 'wiss-progress-wrapper';
+    
+    const progressBar = document.createElement('div');
+    progressBar.className = 'wiss-progress-bar';
+    progressBar.style.animationDuration = `${resolvedDuration}ms`;
+    
+    progressWrapper.append(progressBar);
+    button.append(progressWrapper);
+  } else if (progressWrapper) {
+    progressWrapper.remove();
   }
 
   applyCSS(button, state);

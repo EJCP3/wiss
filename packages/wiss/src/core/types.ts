@@ -40,6 +40,8 @@ export interface WissConfig {
   format?: 'classic' | 'island';
   offset?: number;
   progressBar?: boolean;
+  maxToasts?: number;
+  replaceBehavior?: 'normal' | 'metamorphosis';
 }
 
 export type Listener = (toasts: Toast[]) => void;

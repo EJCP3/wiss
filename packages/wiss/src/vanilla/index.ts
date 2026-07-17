@@ -69,17 +69,17 @@ function animateOut(node: HTMLElement): void {
     return;
   }
   
+  node.dataset.exiting = 'true';
+
   if (node.hasAttribute('data-wiss-toast')) {
     // Wiss theme (handled via wiss.css)
     closeWissToast(node, () => {
-      node.dataset.exiting = 'true';
       const remove = () => node.remove();
       node.addEventListener('transitionend', remove, { once: true });
       setTimeout(remove, EXIT_TIMEOUT_MS);
     });
     return;
   } else if (node.classList.contains('wiss-island')) {
-    node.dataset.exiting = 'true';
     closeIslandToast(node, () => {
       node.classList.add(...ENTER_HIDDEN_CLASSES, 'transition-all', 'duration-300');
       const remove = () => node.remove();
@@ -119,6 +119,7 @@ function reconcile(el: HTMLDivElement, toasts: Toast[], config: ResolvedConfig):
   });
 
   const seen = new Set<string>();
+  const entering: Toast[] = [];
 
   toasts.forEach((toast) => {
     seen.add(toast.id);
@@ -135,6 +136,40 @@ function reconcile(el: HTMLDivElement, toasts: Toast[], config: ResolvedConfig):
       return;
     }
 
+    entering.push(toast);
+  });
+
+  const exiting: HTMLElement[] = [];
+  existingById.forEach((node, id) => {
+    if (!seen.has(id) && node.dataset.exiting !== 'true' && node.dataset.wissExiting !== 'true') {
+      exiting.push(node);
+    }
+  });
+
+  if (config.replaceBehavior === 'metamorphosis' && exiting.length === 1 && entering.length === 1) {
+    const oldNode = exiting[0];
+    const newToast = entering[0];
+
+    oldNode.dataset.wissId = newToast.id;
+    oldNode.dispatchEvent(new Event('wiss:collapse'));
+
+    // Fade out text immediately for a smoother visual transition
+    const title = oldNode.querySelector('.island-title, [data-wiss-title]') as HTMLElement;
+    const desc = oldNode.querySelector('.island-desc, [data-wiss-description]') as HTMLElement;
+    if (title) title.style.opacity = '0';
+    if (desc) desc.style.opacity = '0';
+
+    setTimeout(() => {
+      if (title) title.style.opacity = '';
+      if (desc) desc.style.opacity = '';
+      update(oldNode, newToast);
+      playToastSound(newToast.type);
+    }, 400);
+
+    return;
+  }
+
+  entering.forEach((toast) => {
     const node = render(toast);
     if (config.theme === 'light') {
       node.classList.add('wiss-theme-light');
@@ -154,10 +189,8 @@ function reconcile(el: HTMLDivElement, toasts: Toast[], config: ResolvedConfig):
     });
   });
 
-  existingById.forEach((node, id) => {
-    if (!seen.has(id)) {
-      animateOut(node);
-    }
+  exiting.forEach((node) => {
+    animateOut(node);
   });
 }
 

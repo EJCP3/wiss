@@ -1,3 +1,4 @@
+import { getConfig } from './config';
 import type { Listener, Toast, ToastOptions, ToastType } from './types';
 
 let toasts: Toast[] = [];
@@ -38,6 +39,11 @@ export function addToast(message: string, type: ToastType, options: ToastOptions
     ];
   } else {
     toasts = [...toasts, toast];
+  }
+
+  const { maxToasts } = getConfig();
+  if (toasts.length > maxToasts) {
+    toasts = toasts.slice(toasts.length - maxToasts);
   }
 
   notify();
