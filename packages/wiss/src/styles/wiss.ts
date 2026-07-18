@@ -1,6 +1,7 @@
 import { getConfig } from '../core/config';
 import type { Position, Toast, ToastType } from '../core/types';
 import { getFilterId } from './gooey';
+import { sanitizeHtml } from '../core/sanitize';
 import './wiss.css';
 
 // The whole expand/collapse geometry depends on these — don't tweak them
@@ -10,7 +11,7 @@ const WIDTH = 350;
 const DEFAULT_ROUNDNESS = 18;
 const BLUR_RATIO = 0.5;
 const PILL_PADDING = 10;
-const MIN_EXPAND_RATIO = 2.25;
+const MIN_EXPAND_RATIO = 1.6;
 const DURATION_MS = 600;
 
 // We don't expose a per-toast roundness override yet, so this is constant —
@@ -21,7 +22,7 @@ const BLUR = DEFAULT_ROUNDNESS * BLUR_RATIO;
 // padding. Without this, the expanded height only budgets room for the raw
 // text, so the description ends up pressed against the rounded bottom
 // corners. Must match [data-wiss-content]'s top+bottom padding in wiss.css.
-const CONTENT_PADDING_Y = 40;
+const CONTENT_PADDING_Y = 24;
 
 // Fixed delays (expand almost immediately, collapse a few seconds later),
 // clamped against this toast's *actual* resolved duration so a short toast
@@ -255,7 +256,12 @@ function scheduleAutoExpandCollapse(el: HTMLButtonElement, state: WissState, dur
   }
 }
 
-function createContentSection(edge: ExpandEdge, description: string, action?: { label: string; onClick: () => void }): {
+function createContentSection(
+  edge: ExpandEdge,
+  description: string | HTMLElement,
+  action?: { label: string; onClick: () => void },
+  useRichText = false
+): {
   contentDiv: HTMLDivElement;
   descriptionDiv: HTMLDivElement | null;
   actionButton: HTMLButtonElement | null;
@@ -269,7 +275,15 @@ function createContentSection(edge: ExpandEdge, description: string, action?: { 
   if (description) {
     descriptionDiv = document.createElement('div');
     descriptionDiv.dataset.wissDescription = '';
-    descriptionDiv.textContent = description;
+    if (typeof description === 'string') {
+      if (useRichText) {
+        descriptionDiv.appendChild(sanitizeHtml(description));
+      } else {
+        descriptionDiv.textContent = description;
+      }
+    } else {
+      descriptionDiv.append(description);
+    }
     contentDiv.append(descriptionDiv);
   }
 
@@ -310,6 +324,9 @@ export function renderWissToast(toast: Toast): HTMLElement {
   el.dataset.edge = edge;
   el.dataset.position = align;
   el.dataset.state = toast.type;
+  el.setAttribute('role', toast.type === 'error' ? 'alert' : 'status');
+  el.setAttribute('aria-live', toast.type === 'error' ? 'assertive' : 'polite');
+  el.setAttribute('aria-atomic', 'true');
   el.style.setProperty('--_dur', `${DURATION_MS}ms`);
 
   // Two-rect (pill + body) model wrapped in a <g filter="url(#gooey)"> so
@@ -357,11 +374,29 @@ export function renderWissToast(toast: Toast): HTMLElement {
   const badgeDiv = document.createElement('div');
   badgeDiv.dataset.wissBadge = '';
   badgeDiv.dataset.state = toast.type;
-  badgeDiv.innerHTML = STATE_ICONS[toast.type];
+  if (toast.icon) {
+    if (typeof toast.icon === 'string') {
+      badgeDiv.innerHTML = toast.icon;
+    } else {
+      badgeDiv.append(toast.icon);
+    }
+  } else {
+    badgeDiv.innerHTML = STATE_ICONS[toast.type];
+  }
+  const useRichText = toast.richText ?? config.richText;
+  
   const titleSpan = document.createElement('span');
   titleSpan.dataset.wissTitle = '';
   titleSpan.dataset.state = toast.type;
-  titleSpan.textContent = toast.message;
+  if (typeof toast.message === 'string') {
+    if (useRichText) {
+      titleSpan.appendChild(sanitizeHtml(toast.message));
+    } else {
+      titleSpan.textContent = toast.message;
+    }
+  } else {
+    titleSpan.append(toast.message);
+  }
   headerInner.append(badgeDiv, titleSpan);
   headerStack.append(headerInner);
   headerDiv.append(headerStack);
@@ -385,7 +420,7 @@ export function renderWissToast(toast: Toast): HTMLElement {
   let descriptionDiv: HTMLDivElement | null = null;
   let actionButton: HTMLButtonElement | null = null;
   if (hasContent) {
-    const section = createContentSection(edge, toast.description ?? '', toast.action);
+    const section = createContentSection(edge, toast.description ?? '', toast.action, useRichText);
     contentDiv = section.contentDiv;
     descriptionDiv = section.descriptionDiv;
     actionButton = section.actionButton;
@@ -471,12 +506,32 @@ export function updateWissToast(el: HTMLElement, toast: Toast): void {
   state.headerDiv.dataset.edge = edge;
 
   state.badgeDiv.dataset.state = toast.type;
-  state.badgeDiv.innerHTML = STATE_ICONS[toast.type];
+  if (toast.icon) {
+    if (typeof toast.icon === 'string') {
+      state.badgeDiv.innerHTML = toast.icon;
+    } else {
+      state.badgeDiv.innerHTML = '';
+      state.badgeDiv.append(toast.icon);
+    }
+  } else {
+    state.badgeDiv.innerHTML = STATE_ICONS[toast.type];
+  }
+  const useRichText = toast.richText ?? config.richText;
+
   state.titleSpan.dataset.state = toast.type;
-  state.titleSpan.textContent = toast.message;
+  state.titleSpan.innerHTML = '';
+  if (typeof toast.message === 'string') {
+    if (useRichText) {
+      state.titleSpan.appendChild(sanitizeHtml(toast.message));
+    } else {
+      state.titleSpan.textContent = toast.message;
+    }
+  } else {
+    state.titleSpan.append(toast.message);
+  }
 
   if (hasContent && !state.contentDiv) {
-    const section = createContentSection(edge, toast.description ?? '', toast.action);
+    const section = createContentSection(edge, toast.description ?? '', toast.action, useRichText);
     state.contentDiv = section.contentDiv;
     state.descriptionDiv = section.descriptionDiv;
     state.actionButton = section.actionButton;
@@ -493,7 +548,16 @@ export function updateWissToast(el: HTMLElement, toast: Toast): void {
   } else if (state.contentDiv) {
     // Basic inner update for now
     if (state.descriptionDiv) {
-      state.descriptionDiv.textContent = toast.description ?? '';
+      state.descriptionDiv.innerHTML = '';
+      if (typeof toast.description === 'string') {
+        if (useRichText) {
+          state.descriptionDiv.appendChild(sanitizeHtml(toast.description));
+        } else {
+          state.descriptionDiv.textContent = toast.description;
+        }
+      } else if (toast.description) {
+        state.descriptionDiv.append(toast.description);
+      }
     }
   }
 

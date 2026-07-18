@@ -3,12 +3,16 @@ import type { Position, WissConfig } from './types';
 export interface ResolvedConfig {
   position: Position;
   duration: number;
-  theme: 'light' | 'dark';
+  theme: string;
   format: 'classic' | 'island';
   offset: number;
   progressBar: boolean;
   maxToasts: number;
+  enableHistory: boolean;
+  maxHistory: number;
   replaceBehavior: 'normal' | 'metamorphosis';
+  fontFamily?: string;
+  richText: boolean;
 }
 
 const defaultConfig: ResolvedConfig = {
@@ -18,8 +22,11 @@ const defaultConfig: ResolvedConfig = {
   format: 'classic',
   offset: 16,
   progressBar: false,
-  maxToasts: 1,
+  maxToasts: 5,
+  enableHistory: true,
+  maxHistory: 20,
   replaceBehavior: 'normal',
+  richText: false,
 };
 
 let config: ResolvedConfig = { ...defaultConfig };
@@ -37,6 +44,14 @@ export function setConfig(next: WissConfig): void {
     offset: next.offset ?? config.offset,
     progressBar: next.progressBar ?? config.progressBar,
     maxToasts: next.maxToasts ?? config.maxToasts,
+    enableHistory: next.enableHistory ?? config.enableHistory,
+    maxHistory: next.maxHistory ?? config.maxHistory,
     replaceBehavior: next.replaceBehavior ?? config.replaceBehavior,
+    richText: next.richText ?? config.richText,
   };
+  
+  const resolvedFont = next.fontFamily ?? config.fontFamily;
+  if (resolvedFont !== undefined) {
+    config.fontFamily = resolvedFont;
+  }
 }

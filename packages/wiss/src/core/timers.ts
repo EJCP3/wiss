@@ -7,9 +7,15 @@ interface TimerEntry {
 }
 
 const timers = new Map<string, TimerEntry>();
+let isHovered = false;
 
 export function scheduleDismiss(id: string, durationMs: number): void {
   if (!Number.isFinite(durationMs) || durationMs <= 0) {
+    return;
+  }
+
+  if (isHovered) {
+    timers.set(id, { timer: null, remaining: durationMs, startedAt: Date.now() });
     return;
   }
 
@@ -34,6 +40,7 @@ export function cancelDismiss(id: string): void {
 }
 
 export function pauseAll(): void {
+  isHovered = true;
   for (const [id, entry] of timers) {
     if (entry.timer === null) {
       continue;
@@ -48,6 +55,7 @@ export function pauseAll(): void {
 }
 
 export function resumeAll(): void {
+  isHovered = false;
   for (const [id, entry] of timers) {
     if (entry.timer !== null) {
       continue;

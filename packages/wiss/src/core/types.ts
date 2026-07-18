@@ -15,33 +15,53 @@ export interface ToastAction {
 
 export interface Toast {
   id: string;
-  message: string;
+  message: string | HTMLElement;
   type: ToastType;
-  description?: string;
+  description?: string | HTMLElement;
   duration?: number;
   position?: Position;
   action?: ToastAction;
   progressBar?: boolean;
+  icon?: string | HTMLElement | SVGSVGElement;
+  richText?: boolean;
+  createdAt: number;
 }
 
 export interface ToastOptions {
-  description?: string;
+  description?: string | HTMLElement;
   duration?: number;
   position?: Position;
   id?: string;
   action?: ToastAction;
   progressBar?: boolean;
+  icon?: string | HTMLElement | SVGSVGElement;
+  richText?: boolean;
+  createdAt?: number | Date;
 }
 
 export interface WissConfig {
   position?: Position;
   duration?: number;
-  theme?: 'light' | 'dark';
+  theme?: string;
   format?: 'classic' | 'island';
   offset?: number;
   progressBar?: boolean;
   maxToasts?: number;
+  enableHistory?: boolean;
+  maxHistory?: number;
   replaceBehavior?: 'normal' | 'metamorphosis';
+  fontFamily?: string;
+  richText?: boolean;
+}
+
+export interface PromiseToastOptions<T = any> {
+  loading: string | HTMLElement;
+  success: string | HTMLElement | ((data: T) => string | HTMLElement);
+  error: string | HTMLElement | ((err: any) => string | HTMLElement);
+  duration?: number;
+  position?: Position;
+  id?: string;
 }
 
 export type Listener = (toasts: Toast[]) => void;
+export type HistoryListener = (history: Toast[]) => void;

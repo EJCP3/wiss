@@ -1,4 +1,5 @@
 import { getConfig } from '../core/config';
+import { sanitizeHtml } from '../core/sanitize';
 import type { Toast, ToastType } from '../core/types';
 import './island.css';
 
@@ -101,25 +102,55 @@ export function renderIslandToast(toast: Toast): HTMLElement {
   el.dataset.wissId = toast.id;
   el.dataset.state = toast.type;
   el.dataset.stage = '0';
+  el.setAttribute('role', toast.type === 'error' ? 'alert' : 'status');
+  el.setAttribute('aria-live', toast.type === 'error' ? 'assertive' : 'polite');
+  el.setAttribute('aria-atomic', 'true');
 
   const iconContainer = document.createElement('div');
   iconContainer.className = 'island-icon';
-  iconContainer.innerHTML = ICONS[toast.type];
+  if (toast.icon) {
+    if (typeof toast.icon === 'string') {
+      iconContainer.innerHTML = toast.icon;
+    } else {
+      iconContainer.append(toast.icon);
+    }
+  } else {
+    iconContainer.innerHTML = ICONS[toast.type];
+  }
 
   const contentDiv = document.createElement('div');
   contentDiv.className = 'island-content';
   contentDiv.dataset.visible = 'false';
 
+  const config = getConfig();
+  const useRichText = toast.richText ?? config.richText;
+
   const titleDiv = document.createElement('div');
   titleDiv.className = 'island-title';
-  titleDiv.textContent = toast.message;
+  if (typeof toast.message === 'string') {
+    if (useRichText) {
+      titleDiv.appendChild(sanitizeHtml(toast.message));
+    } else {
+      titleDiv.textContent = toast.message;
+    }
+  } else {
+    titleDiv.append(toast.message);
+  }
   contentDiv.append(titleDiv);
 
   let descDiv = null;
   if (toast.description) {
     descDiv = document.createElement('div');
     descDiv.className = 'island-desc';
-    descDiv.textContent = toast.description;
+    if (typeof toast.description === 'string') {
+      if (useRichText) {
+        descDiv.appendChild(sanitizeHtml(toast.description));
+      } else {
+        descDiv.textContent = toast.description;
+      }
+    } else {
+      descDiv.append(toast.description);
+    }
     contentDiv.append(descDiv);
   }
 
@@ -202,21 +233,56 @@ export function updateIslandToast(el: HTMLElement, toast: Toast): void {
   button.dataset.state = toast.type;
   
   const iconContainer = button.querySelector('.island-icon');
-  if (iconContainer) iconContainer.innerHTML = ICONS[toast.type];
+  if (iconContainer) {
+    if (toast.icon) {
+      if (typeof toast.icon === 'string') {
+        iconContainer.innerHTML = toast.icon;
+      } else {
+        iconContainer.innerHTML = '';
+        iconContainer.append(toast.icon);
+      }
+    } else {
+      iconContainer.innerHTML = ICONS[toast.type];
+    }
+  }
   
-  state.titleDiv.textContent = toast.message;
+  const config = getConfig();
+  const useRichText = toast.richText ?? config.richText;
+  
+  state.titleDiv.innerHTML = '';
+  if (typeof toast.message === 'string') {
+    if (useRichText) {
+      state.titleDiv.appendChild(sanitizeHtml(toast.message));
+    } else {
+      state.titleDiv.textContent = toast.message;
+    }
+  } else {
+    state.titleDiv.append(toast.message);
+  }
 
-  if (toast.description && !state.descDiv) {
-    state.descDiv = document.createElement('div');
-    state.descDiv.className = 'island-desc';
-    state.descDiv.textContent = toast.description;
-    if (state.actionBtn) state.contentDiv.insertBefore(state.descDiv, state.actionBtn);
-    else state.contentDiv.append(state.descDiv);
-  } else if (!toast.description && state.descDiv) {
+  if (toast.description) {
+    if (!state.descDiv) {
+      state.descDiv = document.createElement('div');
+      state.descDiv.className = 'island-desc';
+      if (state.actionBtn) {
+        state.contentDiv.insertBefore(state.descDiv, state.actionBtn);
+      } else {
+        state.contentDiv.append(state.descDiv);
+      }
+    }
+    state.descDiv.innerHTML = '';
+    if (typeof toast.description === 'string') {
+      if (useRichText) {
+        state.descDiv.appendChild(sanitizeHtml(toast.description));
+      } else {
+        state.descDiv.textContent = toast.description;
+      }
+    } else {
+      state.descDiv.append(toast.description);
+    }
+  } else if (state.descDiv) {
     state.descDiv.remove();
     state.descDiv = null;
-  } else if (state.descDiv) {
-    state.descDiv.textContent = toast.description ?? null;
   }
 
   if (toast.action && !state.actionBtn) {
@@ -243,10 +309,10 @@ export function updateIslandToast(el: HTMLElement, toast: Toast): void {
   
   if (showProgressBar) {
     if (progressBar) progressBar.remove();
-    progressBar = document.createElement('div');
-    progressBar.className = 'wiss-progress-bar';
-    progressBar.style.animationDuration = `${resolvedDuration}ms`;
-    button.append(progressBar);
+    const newBar = document.createElement('div');
+    newBar.className = 'wiss-progress-bar';
+    newBar.style.animationDuration = `${resolvedDuration}ms`;
+    button.append(newBar);
   } else if (progressBar) {
     progressBar.remove();
   }

@@ -5,18 +5,20 @@
   justify-content: space-between;
   padding: 0;
   margin: 0;
-  border: 1.5px solid #27272a;
-  background: #18181b;
-  border-radius: 24px;
+  border: var(--wiss-border, 1.5px solid #27272a);
+  background: var(--wiss-bg, #18181b);
+  border-radius: var(--wiss-border-radius, 24px);
   width: var(--island-w, 40px);
   height: var(--island-h, 40px);
   overflow: hidden;
   cursor: pointer;
   box-sizing: border-box;
-  color: #fff;
+  color: var(--wiss-text-title, #fff);
   transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), 
               height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  box-shadow: var(--wiss-shadow, 0 4px 12px rgba(0,0,0,0.5));
+  backdrop-filter: var(--wiss-backdrop-filter, none);
+  -webkit-backdrop-filter: var(--wiss-backdrop-filter, none);
   pointer-events: auto;
   touch-action: pan-y;
 }
@@ -55,7 +57,7 @@
 
 
 .wiss-island:hover {
-  border-color: #3f3f46;
+  border: var(--wiss-border-hover, var(--wiss-border, 1.5px solid #3f3f46));
 }
 .wiss-island:focus-visible {
   outline: 2px solid #0ae448;
@@ -126,10 +128,23 @@
 
 .island-desc {
   font-size: 13px;
-  color: #a1a1aa;
+  color: var(--wiss-text-desc, #a1a1aa);
   margin-top: 4px;
   white-space: normal;
   text-align: left;
+}
+
+.island-desc a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  opacity: 0.85;
+  transition: opacity 150ms ease;
+  font-weight: 500;
+}
+
+.island-desc a:hover {
+  opacity: 1;
 }
 
 .island-action {
@@ -137,8 +152,8 @@
   display: inline-block;
   margin-top: 10px;
   padding: 6px 14px;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background-color: var(--wiss-action-bg, rgba(255, 255, 255, 0.1));
+  color: var(--wiss-action-color, var(--wiss-text-title, #fff));
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
@@ -149,7 +164,11 @@
   transform: translateY(5px);
 }
 .island-action:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--wiss-action-hover-bg, rgba(255, 255, 255, 0.2));
+}
+.island-action:focus-visible {
+  outline: 2px solid var(--wiss-title-success, #0ae448);
+  outline-offset: 2px;
 }
 
 /* Default Colors by state */
@@ -162,24 +181,27 @@
 /* Dynamic background based on text color */
 .wiss-island .island-icon svg { background-color: color-mix(in srgb, currentColor 15%, transparent); }
 
-/* Light theme */
+/* The light theme is now handled globally in themes.css, 
+   but we can leave these as fallback if themes.css is not used. */
 .wiss-island.wiss-theme-light {
-  background: #ffffff;
-  border-color: #e4e4e7;
-  color: #18181b;
+  background: var(--wiss-bg, #ffffff);
+  border-color: var(--wiss-border, #e4e4e7);
+  color: var(--wiss-text-title, #18181b);
 }
 
 .wiss-island.wiss-theme-light .island-desc {
-  color: #52525b;
+  color: var(--wiss-text-desc, #52525b);
 }
 
 .wiss-island.wiss-theme-light .island-action {
-  background-color: rgba(0, 0, 0, 0.05);
-  color: #18181b;
+  background-color: var(--wiss-action-bg, rgba(0, 0, 0, 0.05));
+  color: var(--wiss-action-color, #18181b);
 }
-.wiss-island.wiss-theme-light .island-action:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+.wiss-island:not(.wiss-theme-light) .island-action:hover {
+  background-color: var(--wiss-action-hover-bg, rgba(255, 255, 255, 0.2));
 }
+
+
 
 @keyframes island-spin {
   to { transform: rotate(360deg); }
@@ -187,4 +209,27 @@
 .island-spinner {
   transform-origin: center;
   animation: island-spin 1s linear infinite;
+}
+
+/* --- Accessibility (a11y) --- */
+@media (prefers-reduced-motion: reduce) {
+  .wiss-island {
+    transition: opacity 0.3s ease !important;
+  }
+  .wiss-island[data-exiting="true"] {
+    transition: opacity 0.3s ease !important;
+  }
+  
+  .island-icon svg,
+  .island-title,
+  .island-desc,
+  .island-action {
+    transition: opacity 0.3s ease !important;
+    transform: none !important;
+  }
+  
+  .wiss-progress-bar {
+    animation: none !important;
+    transition: width linear !important;
+  }
 }

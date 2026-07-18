@@ -1,0 +1,163 @@
+/* Base global variables for themes.
+   Default is the dark theme.
+*/
+:root {
+  /* Default text colors */
+  --wiss-text-title: #ffffff;
+  --wiss-text-desc: #d4d4d8;
+  
+  /* Status colors */
+  --wiss-icon-success: #34d399;
+  --wiss-icon-error: #f87171;
+  --wiss-icon-warning: #fbbf24;
+  --wiss-icon-info: #60a5fa;
+  --wiss-title-success: #34d399;
+  --wiss-title-error: #f87171;
+  --wiss-title-warning: #fbbf24;
+  --wiss-title-info: #60a5fa;
+
+  /* Default theme values (Dark) */
+  --wiss-bg: #1c1c1e;
+  --wiss-border: 1.5px solid #27272a;
+  --wiss-border-hover: 1.5px solid #3f3f46;
+  --wiss-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  --wiss-backdrop-filter: none;
+  --wiss-border-radius: 24px;
+  
+  --wiss-action-bg: rgba(255, 255, 255, 0.1);
+  --wiss-action-color: var(--wiss-text-title);
+  --wiss-action-hover-bg: rgba(255, 255, 255, 0.2);
+}
+
+/* 
+ * 1. GLASS THEME 
+ * Translucent frosted glass effect 
+ */
+.wiss-theme-glass {
+  --wiss-bg: rgba(255, 255, 255, 0.2);
+  --wiss-backdrop-filter: blur(24px) saturate(180%);
+  --wiss-border: 1px solid rgba(255, 255, 255, 0.4);
+  --wiss-border-hover: 1px solid rgba(255, 255, 255, 0.6);
+  --wiss-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  
+  --wiss-text-title: #1f2937;
+  --wiss-text-desc: #374151;
+  
+  --wiss-action-bg: rgba(255, 255, 255, 0.5);
+  --wiss-action-hover-bg: rgba(255, 255, 255, 0.7);
+  --wiss-action-color: #1f2937;
+}
+
+/* 
+ * 2. NEON THEME 
+ * Cyberpunk inspired, deep black with glowing colors 
+ */
+.wiss-theme-neon {
+  --wiss-bg: rgba(10, 10, 15, 0.85);
+  --wiss-backdrop-filter: blur(12px);
+  --wiss-border: 1px solid #00f3ff;
+  --wiss-border-hover: 1px solid #ff00ff;
+  --wiss-shadow: 0 0 10px rgba(0, 243, 255, 0.5), inset 0 0 15px rgba(0, 243, 255, 0.3);
+  
+  --wiss-text-title: #ffffff;
+  --wiss-text-desc: #a1a1aa;
+  
+  /* Make status colors extremely vibrant */
+  --wiss-icon-success: #00ff9d;
+  --wiss-title-success: #00ff9d;
+  --wiss-icon-error: #ff0055;
+  --wiss-title-error: #ff0055;
+  --wiss-icon-warning: #ffb800;
+  --wiss-title-warning: #ffb800;
+  --wiss-icon-info: #00e1ff;
+  --wiss-title-info: #00e1ff;
+
+  --wiss-action-bg: rgba(0, 243, 255, 0.1);
+  --wiss-action-hover-bg: rgba(0, 243, 255, 0.2);
+  --wiss-action-color: #00f3ff;
+}
+
+/* 
+ * 3. BRUTAL THEME 
+ * High contrast, thick borders, neo-brutalism
+ */
+.wiss-theme-brutal {
+  --wiss-bg: #ffffff;
+  --wiss-border: 3px solid #000000;
+  --wiss-border-hover: 3px solid #000000;
+  /* Hard shadow instead of soft blur */
+  --wiss-shadow: 4px 4px 0px #000000;
+  --wiss-border-radius: 8px;
+  
+  --wiss-text-title: #000000;
+  --wiss-text-desc: #000000;
+  
+  --wiss-icon-success: #059669;
+  --wiss-title-success: #059669;
+  --wiss-icon-error: #dc2626;
+  --wiss-title-error: #dc2626;
+  --wiss-icon-warning: #d97706;
+  --wiss-title-warning: #d97706;
+  --wiss-icon-info: #2563eb;
+  --wiss-title-info: #2563eb;
+
+  --wiss-action-bg: #fcd34d;
+  --wiss-action-color: #000000;
+  --wiss-action-hover-bg: #f59e0b;
+}
+
+/* 
+ * 4. PASTEL THEME 
+ * Soft, low contrast, friendly colors
+ */
+.wiss-theme-pastel {
+  --wiss-bg: #fff5f8;
+  --wiss-border: 2px solid #ffd1dc;
+  --wiss-border-hover: 2px solid #ffb6c1;
+  --wiss-shadow: 0 8px 24px rgba(255, 182, 193, 0.4);
+  --wiss-border-radius: 30px;
+  
+  --wiss-text-title: #6b4c5a;
+  --wiss-text-desc: #8a737f;
+  
+  /* Soft pastel statuses */
+  --wiss-icon-success: #a8e6cf;
+  --wiss-title-success: #67b79a;
+  --wiss-icon-error: #ffb5b5;
+  --wiss-title-error: #d97878;
+  --wiss-icon-warning: #ffd3b6;
+  --wiss-title-warning: #d19a75;
+  --wiss-icon-info: #b5d8ff;
+  --wiss-title-info: #76a8db;
+
+  --wiss-action-bg: #ffd1dc;
+  --wiss-action-color: #6b4c5a;
+  --wiss-action-hover-bg: #ffb6c1;
+}
+
+/* 
+ * 5. LIGHT THEME 
+ * Default light
+ */
+.wiss-theme-light {
+  --wiss-bg: #ffffff;
+  --wiss-border: 1px solid #e4e4e7;
+  --wiss-border-hover: 1px solid #d4d4d8;
+  --wiss-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  
+  --wiss-text-title: #18181b;
+  --wiss-text-desc: #52525b;
+  
+  --wiss-icon-success: #10b981;
+  --wiss-icon-error: #ef4444;
+  --wiss-icon-warning: #f59e0b;
+  --wiss-icon-info: #3b82f6;
+  --wiss-title-success: #059669;
+  --wiss-title-error: #dc2626;
+  --wiss-title-warning: #d97706;
+  --wiss-title-info: #2563eb;
+
+  --wiss-action-bg: rgba(0, 0, 0, 0.05);
+  --wiss-action-color: #18181b;
+  --wiss-action-hover-bg: rgba(0, 0, 0, 0.1);
+}

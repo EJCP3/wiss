@@ -1,47 +1,48 @@
 import { getConfig, setConfig } from './config';
-import { addToast, clearToasts, removeToast } from './store';
+import { addToast, clearToasts, removeToast, getHistory, clearHistory, subscribeHistory } from './store';
 import { cancelDismiss, scheduleDismiss } from './timers';
-import type { ToastOptions, ToastType, WissConfig } from './types';
+import type { PromiseToastOptions, ToastOptions, ToastType, WissConfig, Toast } from './types';
 
 function resolveDuration(options?: ToastOptions): number {
   return options?.duration ?? getConfig().duration;
 }
 
-function createToast(type: ToastType, message: string, options?: ToastOptions): string {
+function createToast(type: ToastType, message: string | HTMLElement, options?: ToastOptions): string {
   const id = addToast(message, type, options);
   scheduleDismiss(id, resolveDuration(options));
   return id;
 }
 
 export const toast = {
-  show(message: string, options?: ToastOptions): string {
+  show(message: string | HTMLElement, options?: ToastOptions): string {
     return createToast('info', message, options);
   },
-  success(message: string, options?: ToastOptions): string {
+  success(message: string | HTMLElement, options?: ToastOptions): string {
     return createToast('success', message, options);
   },
-  error(message: string, options?: ToastOptions): string {
+  error(message: string | HTMLElement, options?: ToastOptions): string {
     return createToast('error', message, options);
   },
-  warning(message: string, options?: ToastOptions): string {
+  warning(message: string | HTMLElement, options?: ToastOptions): string {
     return createToast('warning', message, options);
   },
-  info(message: string, options?: ToastOptions): string {
+  info(message: string | HTMLElement, options?: ToastOptions): string {
     return createToast('info', message, options);
   },
-  loading(message: string, options?: ToastOptions): string {
+  loading(message: string | HTMLElement, options?: ToastOptions): string {
     return createToast('loading', message, options);
+  },
+  update(id: string, options: Partial<ToastOptions> & { message?: string | HTMLElement, type?: ToastType }): string {
+    const type = options.type ?? 'info';
+    return createToast(type, options.message ?? '', { ...options, id });
   },
   promise<T>(
     promise: Promise<T>,
-    msgs: {
-      loading: string;
-      success: string | ((data: T) => string);
-      error: string | ((err: any) => string);
-    },
+    msgs: PromiseToastOptions<T>,
     options?: ToastOptions
   ): string {
-    const id = toast.loading(msgs.loading, { ...options, duration: 9999999 });
+    const toastId = msgs.id ?? undefined;
+    const id = toast.loading(msgs.loading, { ...options, duration: 9999999, ...(toastId ? { id: toastId } : {}) });
     promise
       .then((data) => {
         toast.success(
@@ -64,7 +65,15 @@ export const toast = {
   clear(): void {
     clearToasts();
   },
+  history(): Toast[] {
+    return getHistory();
+  },
+  clearHistory(): void {
+    clearHistory();
+  },
 };
+
+export { subscribeHistory };
 
 export function initWiss(config?: WissConfig): void {
   setConfig(config ?? {});

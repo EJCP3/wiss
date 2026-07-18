@@ -2,7 +2,13 @@
   "name": "@ejcp/wiss",
   "version": "0.2.0",
   "description": "Librería de notificaciones toast minimalista, personalizable y bonita",
-  "keywords": ["toast", "notification", "alert", "vanilla", "tailwind"],
+  "keywords": [
+    "toast",
+    "notification",
+    "alert",
+    "vanilla",
+    "tailwind"
+  ],
   "author": "EJCP",
   "license": "MIT",
   "repository": {
@@ -26,7 +32,22 @@
       "require": "./dist/island.cjs",
       "types": "./dist/island.d.ts"
     },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": "./dist/styles.css",
+    "./react": {
+      "import": "./dist/react.js",
+      "require": "./dist/react.cjs",
+      "types": "./dist/react.d.ts"
+    },
+    "./vue": {
+      "import": "./dist/vue.js",
+      "require": "./dist/vue.cjs",
+      "types": "./dist/vue.d.ts"
+    },
+    "./svelte": {
+      "import": "./dist/svelte.js",
+      "require": "./dist/svelte.cjs",
+      "types": "./dist/svelte.d.ts"
+    }
   },
   "files": [
     "dist"
@@ -38,17 +59,36 @@
     "playground": "vite --open /playground/sileo-test.html"
   },
   "peerDependencies": {
-    "tailwindcss": ">=3"
+    "react": ">=17",
+    "react-dom": ">=17",
+    "svelte": ">=3",
+    "tailwindcss": ">=3",
+    "vue": ">=3"
   },
   "peerDependenciesMeta": {
     "tailwindcss": {
       "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    },
+    "svelte": {
+      "optional": true
     }
   },
   "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "typescript": "^5.5.4",
     "vite": "^5.4.0",
-    "vite-plugin-dts": "^4.0.3"
+    "vite-plugin-dts": "^4.0.3",
+    "vue": "^3.5.40"
   },
   "dependencies": {
     "cuelume": "^0.1.0"

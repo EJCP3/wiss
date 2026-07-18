@@ -1,15 +1,22 @@
-import { toast } from '@ejcp/wiss';
+import { toast, subscribeHistory } from '@ejcp/wiss';
 import { initToaster } from '@ejcp/wiss/vanilla';
 import type { WissConfig } from '@ejcp/wiss';
 import '@ejcp/wiss/styles.css';
 
 const themeLabel = document.getElementById('theme-label');
 
-let colorTheme: 'light' | 'dark' | 'auto' = 'auto';
-let format: 'classic' | 'island' = 'classic';
+const themes = ['light', 'dark', 'glass', 'neon', 'brutal', 'pastel'];
+let themeIndex = 0;
+let colorTheme: string = themes[themeIndex];
+
+const formats: Array<'classic' | 'island'> = ['classic', 'island'];
+let formatIndex = 0;
+let format = formats[formatIndex];
+
 let pageTheme: 'light' | 'dark' = 'light';
 let showProgressBar: boolean = false;
 let replaceBehavior: 'normal' | 'metamorphosis' = 'normal';
+let enableHistory: boolean = true;
 
 function applyTheme(): void {
   if (themeLabel) {
@@ -30,25 +37,34 @@ function applyTheme(): void {
     document.documentElement.classList.remove('dark');
   }
 
-  const actualToastTheme = colorTheme === 'auto' 
-    ? (pageTheme === 'light' ? 'dark' : 'light') 
-    : colorTheme;
+  const actualToastTheme = colorTheme;
 
   // Evita mezclar nodos ya renderizados con el tema anterior.
   toast.clear();
-  initToaster({ 
+  
+  const configOpts: WissConfig = { 
     theme: actualToastTheme, 
     format, 
     position: 'top-center', 
     duration: 4000, 
     progressBar: showProgressBar,
-    replaceBehavior
-  });
+    replaceBehavior,
+    enableHistory
+  };
+
+  if (format === 'brutalist') {
+    configOpts.fontFamily = 'Courier New, monospace';
+  } else {
+    configOpts.fontFamily = 'system-ui, -apple-system, sans-serif';
+  }
+
+  initToaster(configOpts);
 }
 
 document.getElementById('btn-success')?.addEventListener('click', () => {
-  toast.success('¡Todo salió bien!', { 
-    description: 'Los cambios se han guardado exitosamente en la base de datos. Por favor refresca la página.' 
+  toast.success('<b>¡Todo salió bien!</b>', { 
+    description: 'Los cambios se han guardado exitosamente en la base de datos. Por favor refresca la página. <br/> <a href="#">Ver detalles</a>',
+    richText: true
   });
 });
 
@@ -101,9 +117,8 @@ document.getElementById('btn-promise')?.addEventListener('click', () => {
 });
 
 document.getElementById('btn-theme')?.addEventListener('click', () => {
-  if (colorTheme === 'light') colorTheme = 'dark';
-  else if (colorTheme === 'dark') colorTheme = 'auto';
-  else colorTheme = 'light';
+  themeIndex = (themeIndex + 1) % themes.length;
+  colorTheme = themes[themeIndex];
   applyTheme();
 });
 
@@ -113,7 +128,8 @@ document.getElementById('btn-page-theme')?.addEventListener('click', () => {
 });
 
 document.getElementById('btn-theme-island')?.addEventListener('click', () => {
-  format = format === 'classic' ? 'island' : 'classic';
+  formatIndex = (formatIndex + 1) % formats.length;
+  format = formats[formatIndex];
   applyTheme();
 });
 
@@ -135,6 +151,51 @@ document.getElementById('btn-replace')?.addEventListener('click', () => {
   applyTheme();
 });
 
+document.getElementById('btn-history-toggle')?.addEventListener('click', () => {
+  enableHistory = !enableHistory;
+  const label = document.getElementById('history-toggle-label');
+  if (label) {
+    label.textContent = enableHistory ? 'Activo' : 'Inactivo';
+  }
+  applyTheme();
+});
+
 
 
 applyTheme();
+
+const historyList = document.getElementById('history-list');
+const historyCount = document.getElementById('history-count');
+const btnClearHistory = document.getElementById('btn-clear-history');
+
+if (historyList && historyCount && btnClearHistory) {
+  subscribeHistory((history) => {
+    historyCount.textContent = history.length.toString();
+    
+    if (history.length === 0) {
+      historyList.innerHTML = '<li class="text-sm text-zinc-500 dark:text-zinc-400 italic text-center py-4">No hay notificaciones en el historial.</li>';
+      return;
+    }
+
+    historyList.innerHTML = history.map(t => {
+      const typeColor = t.type === 'error' ? 'text-red-500' 
+                      : t.type === 'success' ? 'text-emerald-500' 
+                      : t.type === 'warning' ? 'text-amber-500' 
+                      : 'text-blue-500';
+      const time = new Date(t.createdAt).toLocaleTimeString();
+      return `
+        <li class="rounded-xl border border-zinc-200 bg-white p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+          <div class="flex items-center justify-between mb-1">
+            <strong class="text-xs uppercase font-bold ${typeColor}">${t.type}</strong>
+            <span class="text-xs text-zinc-400 dark:text-zinc-500">${time}</span>
+          </div>
+          <div class="text-sm text-zinc-700 dark:text-zinc-300">${String(t.message)}</div>
+        </li>
+      `;
+    }).join('');
+  });
+
+  btnClearHistory.addEventListener('click', () => {
+    toast.clearHistory();
+  });
+}

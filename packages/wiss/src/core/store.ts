@@ -1,8 +1,10 @@
 import { getConfig } from './config';
-import type { Listener, Toast, ToastOptions, ToastType } from './types';
+import type { HistoryListener, Listener, Toast, ToastOptions, ToastType } from './types';
 
 let toasts: Toast[] = [];
 let listeners: Listener[] = [];
+let historyToasts: Toast[] = [];
+let historyListeners: HistoryListener[] = [];
 
 export function subscribe(listener: Listener): () => void {
   listeners.push(listener);
@@ -16,18 +18,47 @@ export function notify(): void {
   listeners.forEach((listener) => listener(snapshot));
 }
 
-export function addToast(message: string, type: ToastType, options: ToastOptions = {}): string {
+export function subscribeHistory(listener: HistoryListener): () => void {
+  historyListeners.push(listener);
+  listener([...historyToasts]); // initial state
+  return () => {
+    historyListeners = historyListeners.filter((l) => l !== listener);
+  };
+}
+
+export function notifyHistory(): void {
+  const snapshot = [...historyToasts];
+  historyListeners.forEach((listener) => listener(snapshot));
+}
+
+function addToHistory(toast: Toast, config: { maxHistory: number, enableHistory: boolean }) {
+  if (!config.enableHistory || config.maxHistory <= 0) return;
+  
+  // Prevent duplicate insertion in case it's manually dismissed
+  if (historyToasts.some(t => t.id === toast.id)) return;
+  
+  historyToasts = [toast, ...historyToasts];
+  if (historyToasts.length > config.maxHistory) {
+    historyToasts = historyToasts.slice(0, config.maxHistory);
+  }
+  notifyHistory();
+}
+
+export function addToast(message: string | HTMLElement, type: ToastType, options: ToastOptions = {}): string {
   const id = options.id ?? crypto.randomUUID();
 
   const toast: Toast = {
     id,
     message,
     type,
+    createdAt: options.createdAt ? (typeof options.createdAt === 'number' ? options.createdAt : options.createdAt.getTime()) : Date.now(),
     ...(options.description !== undefined ? { description: options.description } : {}),
     ...(options.duration !== undefined ? { duration: options.duration } : {}),
     ...(options.position !== undefined ? { position: options.position } : {}),
     ...(options.action !== undefined ? { action: options.action } : {}),
     ...(options.progressBar !== undefined ? { progressBar: options.progressBar } : {}),
+    ...(options.icon !== undefined ? { icon: options.icon } : {}),
+    ...(options.richText !== undefined ? { richText: options.richText } : {}),
   };
 
   const existingIndex = toasts.findIndex((t) => t.id === id);
@@ -41,9 +72,12 @@ export function addToast(message: string, type: ToastType, options: ToastOptions
     toasts = [...toasts, toast];
   }
 
-  const { maxToasts } = getConfig();
-  if (toasts.length > maxToasts) {
-    toasts = toasts.slice(toasts.length - maxToasts);
+  const config = getConfig();
+  if (toasts.length > config.maxToasts) {
+    // Los toasts que se caen por maxToasts van al historial
+    const dropped = toasts.slice(0, toasts.length - config.maxToasts);
+    toasts = toasts.slice(toasts.length - config.maxToasts);
+    dropped.forEach(t => addToHistory(t, config));
   }
 
   notify();
@@ -51,11 +85,26 @@ export function addToast(message: string, type: ToastType, options: ToastOptions
 }
 
 export function removeToast(id: string): void {
+  const toastToRemove = toasts.find((t) => t.id === id);
   toasts = toasts.filter((t) => t.id !== id);
+  if (toastToRemove) {
+    addToHistory(toastToRemove, getConfig());
+  }
   notify();
 }
 
 export function clearToasts(): void {
+  const config = getConfig();
+  toasts.forEach(t => addToHistory(t, config));
   toasts = [];
   notify();
+}
+
+export function clearHistory(): void {
+  historyToasts = [];
+  notifyHistory();
+}
+
+export function getHistory(): Toast[] {
+  return [...historyToasts];
 }

@@ -21,12 +21,15 @@ export default defineConfig({
         core: resolve(rootDir, 'src/core/index.ts'),
         vanilla: resolve(rootDir, 'src/vanilla/index.ts'),
         island: resolve(rootDir, 'src/styles/island.ts'),
+        react: resolve(rootDir, 'src/react/index.tsx'),
+        vue: resolve(rootDir, 'src/vue/index.ts'),
+        svelte: resolve(rootDir, 'src/svelte/index.ts'),
       },
       formats: ['es', 'cjs'],
       fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'js' : 'cjs'}`,
     },
     rollupOptions: {
-      external: ['tailwindcss', 'daisyui'],
+      external: ['tailwindcss', 'daisyui', 'react', 'react-dom', 'react/jsx-runtime', 'vue', 'svelte', 'svelte/internal'],
       output: {
         assetFileNames: (assetInfo) => {
           if (assetInfo.name === 'style.css') return 'styles.css';

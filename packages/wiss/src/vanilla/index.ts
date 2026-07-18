@@ -6,6 +6,7 @@ import { pauseAll, resumeAll } from '../core/timers';
 import type { Position, Toast, ToastType, WissConfig } from '../core/types';
 import { renderWissToast, updateWissToast, closeWissToast } from '../styles/wiss';
 import { renderIslandToast, updateIslandToast, closeIslandToast } from '../styles/island';
+import '../styles/themes.css';
 import { setupSwipe } from './swipe';
 
 const CONTAINER_ID = 'wiss-toaster';
@@ -47,6 +48,8 @@ function createContainer(position: Position, offset: number): HTMLDivElement {
   const el = document.createElement('div');
   el.id = CONTAINER_ID;
   el.setAttribute('data-wiss-toaster', '');
+  el.setAttribute('role', 'region');
+  el.setAttribute('aria-label', 'Notificaciones');
   el.style.position = 'fixed';
   el.style.display = 'flex';
   el.style.gap = '0.5rem';
@@ -55,6 +58,12 @@ function createContainer(position: Position, offset: number): HTMLDivElement {
   el.style.maxWidth = '100vw';
 
   applyContainerPosition(el, position, offset);
+
+  const config = getConfig();
+  if (config.fontFamily) {
+    el.style.setProperty('--wiss-font-family', config.fontFamily);
+  }
+
   document.body.appendChild(el);
   return el;
 }
@@ -147,8 +156,8 @@ function reconcile(el: HTMLDivElement, toasts: Toast[], config: ResolvedConfig):
   });
 
   if (config.replaceBehavior === 'metamorphosis' && exiting.length === 1 && entering.length === 1) {
-    const oldNode = exiting[0];
-    const newToast = entering[0];
+    const oldNode = exiting[0]!;
+    const newToast = entering[0]!;
 
     oldNode.dataset.wissId = newToast.id;
     oldNode.dispatchEvent(new Event('wiss:collapse'));
@@ -171,9 +180,13 @@ function reconcile(el: HTMLDivElement, toasts: Toast[], config: ResolvedConfig):
 
   entering.forEach((toast) => {
     const node = render(toast);
-    if (config.theme === 'light') {
-      node.classList.add('wiss-theme-light');
+    
+    // Add format and theme
+    node.dataset.wissFormat = config.format;
+    if (config.theme) {
+      node.classList.add(`wiss-theme-${config.theme}`);
     }
+    
     node.style.pointerEvents = 'auto';
     el.appendChild(node);
     
@@ -202,15 +215,22 @@ export function initToaster(config?: WissConfig): void {
   // Wire up cuelume attributes globally
   bind();
 
-  const { position, theme, offset } = getConfig();
+  const { position, theme, offset, fontFamily } = getConfig();
 
   if (!container) {
     container = createContainer(position, offset);
     container.addEventListener('mouseenter', pauseAll);
     container.addEventListener('mouseleave', resumeAll);
+    container.addEventListener('focusin', pauseAll);
+    container.addEventListener('focusout', resumeAll);
     setupSwipe(container);
   } else {
     applyContainerPosition(container, position, offset);
+    if (fontFamily) {
+      container.style.setProperty('--wiss-font-family', fontFamily);
+    } else {
+      container.style.removeProperty('--wiss-font-family');
+    }
   }
 
   if (!unsubscribeStore) {
