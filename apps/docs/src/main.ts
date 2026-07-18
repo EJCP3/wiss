@@ -15,8 +15,9 @@ let format = formats[formatIndex];
 
 let pageTheme: 'light' | 'dark' = 'light';
 let showProgressBar: boolean = false;
-let replaceBehavior: 'normal' | 'metamorphosis' = 'normal';
+let replaceBehavior: 'normal' | 'wiss' = 'normal';
 let enableHistory: boolean = true;
+let maxToasts: number = 1;
 
 function applyTheme(): void {
   if (themeLabel) {
@@ -49,7 +50,8 @@ function applyTheme(): void {
     duration: 4000, 
     progressBar: showProgressBar,
     replaceBehavior,
-    enableHistory
+    enableHistory,
+    maxToasts
   };
 
   if (format === 'brutalist') {
@@ -159,7 +161,14 @@ document.getElementById('btn-history-toggle')?.addEventListener('click', () => {
   }
   applyTheme();
 });
-
+document.getElementById('btn-limit')?.addEventListener('click', () => {
+  maxToasts = maxToasts === 5 ? 3 : (maxToasts === 3 ? 1 : 5);
+  const label = document.getElementById('limit-label');
+  if (label) {
+    label.textContent = maxToasts.toString();
+  }
+  applyTheme();
+});
 
 
 applyTheme();
