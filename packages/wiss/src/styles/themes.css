@@ -24,6 +24,9 @@
   --wiss-backdrop-filter: none;
   --wiss-border-radius: 24px;
   
+  --wiss-font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --wiss-svg-filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+  
   --wiss-action-bg: rgba(255, 255, 255, 0.1);
   --wiss-action-color: var(--wiss-text-title);
   --wiss-action-hover-bg: rgba(255, 255, 255, 0.2);
@@ -31,21 +34,47 @@
 
 /* 
  * 1. GLASS THEME 
- * Translucent frosted glass effect 
+ * Translucent frosted glass effect.
+ * Classic format uses --wiss-svg-bg and --wiss-svg-opacity.
+ * Island format uses --wiss-bg, backdrop-filter, border, and shadow.
  */
 .wiss-theme-glass {
-  --wiss-bg: rgba(255, 255, 255, 0.2);
-  --wiss-backdrop-filter: blur(24px) saturate(180%);
-  --wiss-border: 1px solid rgba(255, 255, 255, 0.4);
-  --wiss-border-hover: 1px solid rgba(255, 255, 255, 0.6);
-  --wiss-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  /* For Island format */
+  --wiss-bg: rgba(255, 255, 255, 0.15);
+  --wiss-backdrop-filter: blur(16px);
+  --wiss-border: 1px solid rgba(255, 255, 255, 0.3);
+  --wiss-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
   
+  /* For Classic format */
+  --wiss-svg-bg: #d4d4d8;
+  --wiss-svg-opacity: 0.95;
+  
+  --wiss-font-family: 'Outfit', 'Montserrat', system-ui, sans-serif;
+  
+  /* Texto oscuro para contraste en fondos claros */
   --wiss-text-title: #1f2937;
   --wiss-text-desc: #374151;
   
-  --wiss-action-bg: rgba(255, 255, 255, 0.5);
-  --wiss-action-hover-bg: rgba(255, 255, 255, 0.7);
+  --wiss-action-bg: rgba(0, 0, 0, 0.08);
+  --wiss-action-hover-bg: rgba(0, 0, 0, 0.15);
   --wiss-action-color: #1f2937;
+}
+
+/* Glass on dark backgrounds: white text */
+.dark .wiss-theme-glass {
+  /* For Island format */
+  --wiss-bg: rgba(255, 255, 255, 0.15);
+  --wiss-border: 1px solid rgba(255, 255, 255, 0.15);
+  
+  /* For Classic format */
+  --wiss-svg-bg: #3f3f46;
+  --wiss-svg-opacity: 0.92;
+  
+  --wiss-text-title: #ffffff;
+  --wiss-text-desc: rgba(255, 255, 255, 0.85);
+  --wiss-action-bg: rgba(255, 255, 255, 0.2);
+  --wiss-action-hover-bg: rgba(255, 255, 255, 0.35);
+  --wiss-action-color: #ffffff;
 }
 
 /* 
@@ -53,16 +82,17 @@
  * Cyberpunk inspired, deep black with glowing colors 
  */
 .wiss-theme-neon {
-  --wiss-bg: rgba(10, 10, 15, 0.85);
+  /* LIGHT MODE (Purple neon) */
+  --wiss-bg: #221235;
   --wiss-backdrop-filter: blur(12px);
-  --wiss-border: 1px solid #00f3ff;
-  --wiss-border-hover: 1px solid #ff00ff;
-  --wiss-shadow: 0 0 10px rgba(0, 243, 255, 0.5), inset 0 0 15px rgba(0, 243, 255, 0.3);
+  --wiss-border: 1px solid #bc13fe;
+  --wiss-border-hover: 1px solid #e073ff;
+  
+  --wiss-shadow: 0 0 15px 2px rgba(188, 19, 254, 0.5), inset 0 0 10px rgba(188, 19, 254, 0.2);
   
   --wiss-text-title: #ffffff;
-  --wiss-text-desc: #a1a1aa;
+  --wiss-text-desc: #00e1ff;
   
-  /* Make status colors extremely vibrant */
   --wiss-icon-success: #00ff9d;
   --wiss-title-success: #00ff9d;
   --wiss-icon-error: #ff0055;
@@ -72,9 +102,26 @@
   --wiss-icon-info: #00e1ff;
   --wiss-title-info: #00e1ff;
 
-  --wiss-action-bg: rgba(0, 243, 255, 0.1);
-  --wiss-action-hover-bg: rgba(0, 243, 255, 0.2);
-  --wiss-action-color: #00f3ff;
+  --wiss-action-bg: rgba(188, 19, 254, 0.2);
+  --wiss-action-hover-bg: rgba(188, 19, 254, 0.35);
+  --wiss-action-color: #e073ff;
+  --wiss-border-radius: 20px;
+  --wiss-svg-filter: drop-shadow(0 0 12px rgba(188, 19, 254, 0.6)) drop-shadow(0 0 4px rgba(188, 19, 254, 0.3));
+  --wiss-font-family: 'Orbitron', 'Fira Code', monospace;
+}
+
+/* DARK MODE (Deep black with pink/red neon) */
+.dark .wiss-theme-neon {
+  --wiss-bg: #111113;
+  --wiss-border: 1px solid #ff0055;
+  --wiss-border-hover: 1px solid #ff4d88;
+  
+  --wiss-shadow: 0 0 20px 4px rgba(255, 0, 85, 0.4), inset 0 0 15px rgba(255, 0, 85, 0.2);
+  
+  --wiss-action-bg: rgba(255, 0, 85, 0.15);
+  --wiss-action-hover-bg: rgba(255, 0, 85, 0.3);
+  --wiss-action-color: #ff0055;
+  --wiss-svg-filter: drop-shadow(0 0 12px rgba(255, 0, 85, 0.6)) drop-shadow(0 0 4px rgba(255, 0, 85, 0.3));
 }
 
 /* 
@@ -82,28 +129,57 @@
  * High contrast, thick borders, neo-brutalism
  */
 .wiss-theme-brutal {
-  --wiss-bg: #ffffff;
-  --wiss-border: 3px solid #000000;
-  --wiss-border-hover: 3px solid #000000;
-  /* Hard shadow instead of soft blur */
-  --wiss-shadow: 4px 4px 0px #000000;
+  /* LIGHT MODE (based on user's brutal colors) */
+  --wiss-bg: #f5f3ee;
+  --wiss-border: 3px solid #1a1a17;
+  --wiss-border-hover: 3px solid #1a1a17;
+  --wiss-shadow: 5px 5px 0px 0px #1a1a17;
   --wiss-border-radius: 8px;
   
-  --wiss-text-title: #000000;
-  --wiss-text-desc: #000000;
+  --wiss-font-family: 'Inter', sans-serif;
+  --wiss-svg-filter: drop-shadow(4px 4px 0px #1a1a17);
   
-  --wiss-icon-success: #059669;
-  --wiss-title-success: #059669;
-  --wiss-icon-error: #dc2626;
-  --wiss-title-error: #dc2626;
-  --wiss-icon-warning: #d97706;
-  --wiss-title-warning: #d97706;
-  --wiss-icon-info: #2563eb;
-  --wiss-title-info: #2563eb;
+  --wiss-text-title: #1a1a17;
+  --wiss-text-desc: #3d3a33;
+  
+  --wiss-icon-success: #4a5a4a;
+  --wiss-title-success: #4a5a4a;
+  --wiss-icon-error: #7f1d1d;
+  --wiss-title-error: #7f1d1d;
+  --wiss-icon-warning: #3d3a33;
+  --wiss-title-warning: #3d3a33;
+  --wiss-icon-info: #6f6b62;
+  --wiss-title-info: #6f6b62;
 
-  --wiss-action-bg: #fcd34d;
-  --wiss-action-color: #000000;
-  --wiss-action-hover-bg: #f59e0b;
+  --wiss-action-bg: #e2e2e2;
+  --wiss-action-color: #1a1a17;
+  --wiss-action-hover-bg: #d4d9ce;
+}
+
+.dark .wiss-theme-brutal {
+  /* DARK MODE (inverted brutal) */
+  --wiss-bg: #1a1a17;
+  --wiss-border: 3px solid #f5f3ee;
+  --wiss-border-hover: 3px solid #f5f3ee;
+  --wiss-shadow: 5px 5px 0px 0px #f5f3ee;
+  
+  --wiss-svg-filter: drop-shadow(4px 4px 0px #f5f3ee);
+  
+  --wiss-text-title: #f5f3ee;
+  --wiss-text-desc: #e2e2e2;
+  
+  --wiss-icon-success: #e5eae2;
+  --wiss-title-success: #e5eae2;
+  --wiss-icon-error: #f5f3ee;
+  --wiss-title-error: #f5f3ee;
+  --wiss-icon-warning: #f0ede5;
+  --wiss-title-warning: #f0ede5;
+  --wiss-icon-info: #d4d9ce;
+  --wiss-title-info: #d4d9ce;
+
+  --wiss-action-bg: #3d3a33;
+  --wiss-action-color: #f5f3ee;
+  --wiss-action-hover-bg: #4a5a4a;
 }
 
 /* 
@@ -116,6 +192,9 @@
   --wiss-border-hover: 2px solid #ffb6c1;
   --wiss-shadow: 0 8px 24px rgba(255, 182, 193, 0.4);
   --wiss-border-radius: 30px;
+  
+  --wiss-font-family: 'Quicksand', 'Nunito', sans-serif;
+  --wiss-svg-filter: drop-shadow(0 8px 16px rgba(255, 182, 193, 0.4));
   
   --wiss-text-title: #6b4c5a;
   --wiss-text-desc: #8a737f;
@@ -160,4 +239,45 @@
   --wiss-action-bg: rgba(0, 0, 0, 0.05);
   --wiss-action-color: #18181b;
   --wiss-action-hover-bg: rgba(0, 0, 0, 0.1);
+}
+  --wiss-icon-success: #10b981;
+  --wiss-icon-error: #ef4444;
+  --wiss-icon-warning: #f59e0b;
+  --wiss-icon-info: #3b82f6;
+  --wiss-title-success: #059669;
+  --wiss-title-error: #dc2626;
+  --wiss-title-warning: #d97706;
+  --wiss-title-info: #2563eb;
+
+  --wiss-action-bg: rgba(0, 0, 0, 0.05);
+  --wiss-action-color: #18181b;
+  --wiss-action-hover-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* 
+ * 6. SHADCN THEME 
+ * Automatically maps to shadcn/ui CSS variables (Tailwind v4 / oklch / hex)
+ */
+.wiss-theme-shadcn {
+  --wiss-bg: var(--background);
+  --wiss-border: 1px solid var(--border);
+  --wiss-border-hover: 1px solid var(--border);
+  --wiss-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  
+  --wiss-text-title: var(--foreground);
+  --wiss-text-desc: var(--muted-foreground);
+  
+  --wiss-icon-success: var(--primary);
+  --wiss-icon-error: var(--destructive);
+  --wiss-icon-warning: var(--destructive);
+  --wiss-icon-info: var(--primary);
+  
+  --wiss-title-success: var(--primary);
+  --wiss-title-error: var(--destructive);
+  --wiss-title-warning: var(--destructive);
+  --wiss-title-info: var(--primary);
+
+  --wiss-action-bg: var(--secondary);
+  --wiss-action-color: var(--secondary-foreground);
+  --wiss-action-hover-bg: var(--muted);
 }
