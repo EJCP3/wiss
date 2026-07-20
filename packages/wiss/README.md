@@ -1,4 +1,4 @@
-# wiss
+# wissfort
 
 Librería de notificaciones toast **headless** y sin dependencias de runtime. El
 núcleo (`wiss`) es un "cerebro" de TypeScript puro —estado, cola, timers— que
@@ -185,8 +185,41 @@ Para **Svelte 3/4**:
 <button on:click={() => toast.success('¡Hecho!')}>Notify</button>
 ```
 
-## Roadmap
+## API
 
+### Métodos (Methods)
+
+| MÉTODO | DESCRIPCIÓN |
+|---|---|
+| `toast.success(mensaje, opciones?)` | Muestra un toast de éxito (color verde) |
+| `toast.error(mensaje, opciones?)` | Muestra un toast de error (color rojo) |
+| `toast.warning(mensaje, opciones?)` | Muestra un toast de advertencia (color amarillo) |
+| `toast.info(mensaje, opciones?)` | Muestra un toast de información (color azul) |
+| `toast.loading(mensaje, opciones?)` | Muestra un toast en estado de carga animado |
+| `toast.show(mensaje, opciones?)` | Muestra un toast genérico (equivalente a info) |
+| `toast.update(id, opciones)` | Actualiza el contenido, tipo u opciones de un toast existente |
+| `toast.promise(promesa, msgs, opts?)` | Maneja automáticamente una promesa (carga → éxito/error) |
+| `toast.dismiss(id)` | Oculta un toast específico utilizando su ID |
+| `toast.clear()` | Elimina todos los toasts visibles en pantalla |
+| `toast.history()` | Devuelve el array con el historial de notificaciones |
+| `toast.clearHistory()` | Limpia el historial de notificaciones guardadas |
+
+### Opciones por Toast (ToastOptions)
+
+Estas opciones se pueden pasar como segundo argumento a cualquier método `toast.*(mensaje, opciones)`.
+
+| PROPIEDAD | TIPO | DESCRIPCIÓN |
+|---|---|---|
+| `description` | `string \| HTMLElement` | Texto secundario o descripción detallada debajo del título |
+| `duration` | `number` | Tiempo en milisegundos (ms) antes de desaparecer (ej. `4000`) |
+| `position` | `Position` | Sobrescribe la posición global exclusivamente para este toast |
+| `id` | `string` | Identificador único (útil para actualizarlo o cerrarlo manualmente) |
+| `action` | `{ label, onClick }` | Añade un botón de acción (ej. Deshacer) dentro del toast |
+| `progressBar` | `boolean` | Activa o desactiva la barra de progreso de tiempo animada |
+| `icon` | `string \| HTMLElement \| SVG` | Reemplaza el ícono predeterminado por uno personalizado |
+| `richText` | `boolean` | Permite renderizar el texto como HTML (usa sanitización interna de seguridad) |
+
+## Roadmap
 Fuera de alcance en esta fase, planeado para más adelante:
 
 - Mejora del sitio web/Docs

@@ -4,7 +4,7 @@ import type { Position, WissConfig, Toast } from '../core/types';
 import { readable } from 'svelte/store';
 
 /**
- * Svelte wrapper for the wiss toast system.
+ * Svelte wrapper for the wissfort toast system.
  *
  * Since we can't ship a `.svelte` component from a pure Vite library
  * build (that would require the Svelte compiler plugin), we export a
@@ -15,8 +15,8 @@ import { readable } from 'svelte/store';
  * ```svelte
  * <script>
  *   import { onMount } from 'svelte';
- *   import { toaster } from 'wiss/svelte';
- *   import { toast } from 'wiss';
+ *   import { toaster } from 'wissfort/svelte';
+ *   import { toast } from 'wissfort';
  *
  *   onMount(() => toaster({ position: 'bottom-right', theme: 'dark' }));
  * </script>
@@ -27,8 +27,8 @@ import { readable } from 'svelte/store';
  * ### Usage (Svelte 5)
  * ```svelte
  * <script>
- *   import { toaster } from 'wiss/svelte';
- *   import { toast } from 'wiss';
+ *   import { toaster } from 'wissfort/svelte';
+ *   import { toast } from 'wissfort';
  *
  *   $effect(() => toaster({ position: 'bottom-right', theme: 'dark' }));
  * </script>

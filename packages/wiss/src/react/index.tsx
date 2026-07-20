@@ -1,18 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { initToaster } from '../vanilla';
+import { toaster } from '../vanilla';
 import { subscribeHistory } from '../core';
 import type { WissConfig } from '../core/types';
 
 /**
- * React wrapper for the wiss toast system.
+ * React wrapper for the wissfort toast system.
  *
  * Drop this component once at the root of your app. It renders nothing
  * visible — it just boots the toaster container and keeps it in sync
  * with the props you pass.
  *
  * ```tsx
- * import { Toaster } from '@ejcp/wiss/react';
- * import { toast } from '@ejcp/wiss';
+ * import { Toaster } from 'wissfort/react';
+ * import { toast } from 'wissfort';
  *
  * function App() {
  *   return (
@@ -32,7 +32,7 @@ export function Toaster(props: WissConfig): null {
 
   // First mount — always init.
   useEffect(() => {
-    initToaster(props);
+    toaster(props);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -40,7 +40,7 @@ export function Toaster(props: WissConfig): null {
   useEffect(() => {
     if (serialized !== prevRef.current) {
       prevRef.current = serialized;
-      initToaster(props);
+      toaster(props);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serialized]);

@@ -2,6 +2,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 
 const rootDir = fileURLToPath(new URL('.', import.meta.url));
 
@@ -10,6 +11,11 @@ export default defineConfig({
     dts({
       tsconfigPath: resolve(rootDir, 'tsconfig.json'),
       entryRoot: 'src',
+    }),
+    cssInjectedByJsPlugin({
+      jsAssetsFilterFunction: function customJsAssetsfilterFunction(outputChunk) {
+        return outputChunk.name === 'vanilla' || outputChunk.name === 'vanilla/index';
+      }
     }),
   ],
   build: {

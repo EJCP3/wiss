@@ -8,12 +8,12 @@ import {
   type Ref,
   h,
 } from 'vue';
-import { initToaster } from '../vanilla';
+import { toaster } from '../vanilla';
 import { subscribeHistory } from '../core';
 import type { Position, WissConfig, Toast } from '../core/types';
 
 /**
- * Vue wrapper for the wiss toast system.
+ * Vue wrapper for the wissfort toast system.
  *
  * Register it once at the root of your app. It renders nothing visible —
  * it just boots the toaster container and keeps it in sync with the
@@ -21,8 +21,8 @@ import type { Position, WissConfig, Toast } from '../core/types';
  *
  * ```vue
  * <script setup>
- * import { Toaster } from 'wiss/vue';
- * import { toast } from 'wiss';
+ * import { Toaster } from 'wissfort/vue';
+ * import { toast } from 'wissfort';
  * </script>
  *
  * <template>
@@ -63,7 +63,7 @@ export const Toaster = defineComponent({
       default: undefined,
     },
     replaceBehavior: {
-      type: String as PropType<'normal' | 'metamorphosis'>,
+      type: String as PropType<'normal' | 'wiss'>,
       default: undefined,
     },
   },
@@ -82,13 +82,13 @@ export const Toaster = defineComponent({
     }
 
     onMounted(() => {
-      initToaster(buildConfig());
+      toaster(buildConfig());
     });
 
     watch(
       () => ({ ...props }),
       () => {
-        initToaster(buildConfig());
+        toaster(buildConfig());
       },
       { deep: true },
     );

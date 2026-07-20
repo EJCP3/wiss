@@ -81,7 +81,7 @@ function animateOut(node: HTMLElement): void {
   node.dataset.exiting = 'true';
 
   if (node.hasAttribute('data-wiss-toast')) {
-    // Wiss theme (handled via wiss.css)
+    // Wissfort theme (handled via wiss.css)
     closeWissToast(node, () => {
       const remove = () => node.remove();
       node.addEventListener('transitionend', remove, { once: true });
@@ -155,7 +155,7 @@ function reconcile(el: HTMLDivElement, toasts: Toast[], config: ResolvedConfig):
     }
   });
 
-  if (config.replaceBehavior === 'metamorphosis' && exiting.length === 1 && entering.length === 1) {
+  if (config.replaceBehavior === 'wiss' && exiting.length === 1 && entering.length === 1) {
     const oldNode = exiting[0]!;
     const newToast = entering[0]!;
 

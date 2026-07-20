@@ -49,7 +49,7 @@ export interface WissConfig {
   maxToasts?: number;
   enableHistory?: boolean;
   maxHistory?: number;
-  replaceBehavior?: 'normal' | 'metamorphosis';
+  replaceBehavior?: 'normal' | 'wiss';
   fontFamily?: string;
   richText?: boolean;
 }
