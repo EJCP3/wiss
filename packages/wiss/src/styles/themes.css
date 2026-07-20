@@ -187,31 +187,59 @@
  * Soft, low contrast, friendly colors
  */
 .wiss-theme-pastel {
-  --wiss-bg: #fff5f8;
-  --wiss-border: 2px solid #ffd1dc;
-  --wiss-border-hover: 2px solid #ffb6c1;
-  --wiss-shadow: 0 8px 24px rgba(255, 182, 193, 0.4);
-  --wiss-border-radius: 30px;
+  /* LIGHT MODE (Pastel Shadcn) */
+  --wiss-bg: #fff9fb;
+  --wiss-border: 2px solid #ffe1e9;
+  --wiss-border-hover: 2px solid #ffb7c5;
+  --wiss-shadow: 0 4px 12px rgba(255, 209, 220, 0.4);
+  --wiss-border-radius: 1.25rem;
   
-  --wiss-font-family: 'Quicksand', 'Nunito', sans-serif;
-  --wiss-svg-filter: drop-shadow(0 8px 16px rgba(255, 182, 193, 0.4));
+  --wiss-font-family: 'Jua', sans-serif;
+  --wiss-svg-filter: drop-shadow(0 4px 12px rgba(255, 209, 220, 0.4));
   
-  --wiss-text-title: #6b4c5a;
-  --wiss-text-desc: #8a737f;
+  --wiss-text-title: #5d4037;
+  --wiss-text-desc: #9e7e88;
   
-  /* Soft pastel statuses */
-  --wiss-icon-success: #a8e6cf;
-  --wiss-title-success: #67b79a;
-  --wiss-icon-error: #ffb5b5;
-  --wiss-title-error: #d97878;
-  --wiss-icon-warning: #ffd3b6;
-  --wiss-title-warning: #d19a75;
-  --wiss-icon-info: #b5d8ff;
-  --wiss-title-info: #76a8db;
+  /* Statuses (Vibrant Pastels) */
+  --wiss-icon-success: #4ade80; /* green-400 */
+  --wiss-title-success: #2d4a3e;
+  --wiss-icon-error: #fb7185; /* rose-400 */
+  --wiss-title-error: #9f1239; /* rose-800 */
+  --wiss-icon-warning: #fbbf24; /* amber-400 */
+  --wiss-title-warning: #8b7233;
+  --wiss-icon-info: #38bdf8; /* sky-400 */
+  --wiss-title-info: #075985; /* sky-800 */
 
-  --wiss-action-bg: #ffd1dc;
-  --wiss-action-color: #6b4c5a;
-  --wiss-action-hover-bg: #ffb6c1;
+  --wiss-action-bg: #fdf2f5;
+  --wiss-action-color: #5d4037;
+  --wiss-action-hover-bg: #ffe1e9;
+}
+
+.dark .wiss-theme-pastel {
+  /* DARK MODE (Pastel Shadcn) */
+  --wiss-bg: #2d1b22;
+  --wiss-border: 2px solid #5d404a;
+  --wiss-border-hover: 2px solid #ff8da1;
+  --wiss-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  
+  --wiss-svg-filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.5));
+  
+  --wiss-text-title: #fff0f3;
+  --wiss-text-desc: #d4bcc4;
+  
+  /* Statuses (Vibrant Pastels) */
+  --wiss-icon-success: #4ade80; /* green-400 */
+  --wiss-title-success: #4ade80;
+  --wiss-icon-error: #fb7185; /* rose-400 */
+  --wiss-title-error: #fb7185;
+  --wiss-icon-warning: #fbbf24; /* amber-400 */
+  --wiss-title-warning: #fbbf24;
+  --wiss-icon-info: #38bdf8; /* sky-400 */
+  --wiss-title-info: #38bdf8;
+
+  --wiss-action-bg: #4a313a;
+  --wiss-action-color: #fff0f3;
+  --wiss-action-hover-bg: #5d404a;
 }
 
 /* 
@@ -223,23 +251,11 @@
   --wiss-border: 1px solid #e4e4e7;
   --wiss-border-hover: 1px solid #d4d4d8;
   --wiss-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  --wiss-svg-filter: drop-shadow(0 4px 12px rgba(0,0,0,0.08));
   
   --wiss-text-title: #18181b;
   --wiss-text-desc: #52525b;
   
-  --wiss-icon-success: #10b981;
-  --wiss-icon-error: #ef4444;
-  --wiss-icon-warning: #f59e0b;
-  --wiss-icon-info: #3b82f6;
-  --wiss-title-success: #059669;
-  --wiss-title-error: #dc2626;
-  --wiss-title-warning: #d97706;
-  --wiss-title-info: #2563eb;
-
-  --wiss-action-bg: rgba(0, 0, 0, 0.05);
-  --wiss-action-color: #18181b;
-  --wiss-action-hover-bg: rgba(0, 0, 0, 0.1);
-}
   --wiss-icon-success: #10b981;
   --wiss-icon-error: #ef4444;
   --wiss-icon-warning: #f59e0b;
@@ -263,6 +279,7 @@
   --wiss-border: 1px solid var(--border);
   --wiss-border-hover: 1px solid var(--border);
   --wiss-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  --wiss-svg-filter: drop-shadow(0 4px 12px rgba(0,0,0,0.08));
   
   --wiss-text-title: var(--foreground);
   --wiss-text-desc: var(--muted-foreground);
@@ -280,4 +297,64 @@
   --wiss-action-bg: var(--secondary);
   --wiss-action-color: var(--secondary-foreground);
   --wiss-action-hover-bg: var(--muted);
+}
+
+/* 
+ * 7. POP THEME 
+ * Comic/neo-brutalism style with hard shadows and vibrant colors
+ */
+.wiss-theme-pop {
+  /* LIGHT MODE */
+  --wiss-bg: #eff5f6;
+  --wiss-border: 2px solid #163666;
+  --wiss-border-hover: 2px solid #163666;
+  --wiss-shadow: 2px 2px 0px 0.5px #163666;
+  --wiss-border-radius: 0.25rem;
+  
+  --wiss-font-family: 'Khand', ui-sans-serif, sans-serif;
+  --wiss-svg-filter: drop-shadow(2px 2px 0px #163666);
+  
+  --wiss-text-title: #163666;
+  --wiss-text-desc: #163666;
+  
+  /* Statuses */
+  --wiss-icon-success: #abced9; /* blue */
+  --wiss-title-success: #163666;
+  --wiss-icon-error: #e05047; /* red */
+  --wiss-title-error: #e05047;
+  --wiss-icon-warning: #e8651a; /* orange */
+  --wiss-title-warning: #e8651a;
+  --wiss-icon-info: #faca78; /* yellow */
+  --wiss-title-info: #163666;
+
+  --wiss-action-bg: #faca78;
+  --wiss-action-color: #163666;
+  --wiss-action-hover-bg: #f37d59;
+}
+
+.dark .wiss-theme-pop {
+  /* DARK MODE */
+  --wiss-bg: #163666;
+  --wiss-border: 2px solid #00a6b6;
+  --wiss-border-hover: 2px solid #71c9c5;
+  --wiss-shadow: 2px 2px 0px 0.5px #000000;
+  
+  --wiss-svg-filter: drop-shadow(2px 2px 0px #000000);
+  
+  --wiss-text-title: #eff5f6;
+  --wiss-text-desc: #b2d3de;
+  
+  /* Statuses */
+  --wiss-icon-success: #71c9c5; /* teal */
+  --wiss-title-success: #71c9c5;
+  --wiss-icon-error: #e05047; /* red */
+  --wiss-title-error: #e05047;
+  --wiss-icon-warning: #faca78; /* yellow */
+  --wiss-title-warning: #faca78;
+  --wiss-icon-info: #047c97; /* dark cyan */
+  --wiss-title-info: #047c97;
+
+  --wiss-action-bg: #047c97;
+  --wiss-action-color: #eff5f6;
+  --wiss-action-hover-bg: #0d264a;
 }

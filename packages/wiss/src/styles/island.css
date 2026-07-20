@@ -28,11 +28,11 @@
 }
 
 /* --- Progress Bar --- */
-.wiss-island[data-state="success"] { --wiss-progress-color: #10b981; }
-.wiss-island[data-state="error"] { --wiss-progress-color: #ef4444; }
-.wiss-island[data-state="warning"] { --wiss-progress-color: #f59e0b; }
-.wiss-island[data-state="info"] { --wiss-progress-color: #3b82f6; }
-.wiss-island[data-state="loading"] { --wiss-progress-color: #a855f7; }
+.wiss-island[data-state="success"] { --wiss-progress-color: var(--wiss-icon-success, #10b981); }
+.wiss-island[data-state="error"] { --wiss-progress-color: var(--wiss-icon-error, #ef4444); }
+.wiss-island[data-state="warning"] { --wiss-progress-color: var(--wiss-icon-warning, #f59e0b); }
+.wiss-island[data-state="info"] { --wiss-progress-color: var(--wiss-icon-info, #3b82f6); }
+.wiss-island[data-state="loading"] { --wiss-progress-color: var(--wiss-icon-info, #a855f7); }
 
 .wiss-progress-bar {
   position: absolute;
@@ -172,11 +172,11 @@
 }
 
 /* Default Colors by state */
-.wiss-island[data-state="success"] .island-icon { color: #10b981; }
-.wiss-island[data-state="error"] .island-icon { color: #ef4444; }
-.wiss-island[data-state="warning"] .island-icon { color: #f59e0b; }
-.wiss-island[data-state="info"] .island-icon { color: #3b82f6; }
-.wiss-island[data-state="loading"] .island-icon { color: #a855f7; }
+.wiss-island[data-state="success"] .island-icon { color: var(--wiss-icon-success, #10b981); }
+.wiss-island[data-state="error"] .island-icon { color: var(--wiss-icon-error, #ef4444); }
+.wiss-island[data-state="warning"] .island-icon { color: var(--wiss-icon-warning, #f59e0b); }
+.wiss-island[data-state="info"] .island-icon { color: var(--wiss-icon-info, #3b82f6); }
+.wiss-island[data-state="loading"] .island-icon { color: var(--wiss-icon-info, #a855f7); }
 
 /* Dynamic background based on text color */
 .wiss-island .island-icon svg { background-color: color-mix(in srgb, currentColor 15%, transparent); }
@@ -185,8 +185,19 @@
    but we can leave these as fallback if themes.css is not used. */
 .wiss-island.wiss-theme-light {
   background: var(--wiss-bg, #ffffff);
-  border-color: var(--wiss-border, #e4e4e7);
   color: var(--wiss-text-title, #18181b);
+}
+
+/* Remove borders in Island format for these specific themes */
+.wiss-island.wiss-theme-light,
+.wiss-island.wiss-theme-neon,
+.wiss-island.wiss-theme-pastel {
+  border: none !important;
+}
+.wiss-island.wiss-theme-light:hover,
+.wiss-island.wiss-theme-neon:hover,
+.wiss-island.wiss-theme-pastel:hover {
+  border: none !important;
 }
 
 .wiss-island.wiss-theme-light .island-desc {

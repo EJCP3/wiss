@@ -5,7 +5,7 @@ import '@ejcp/wiss/styles.css';
 
 const themeLabel = document.getElementById('theme-label');
 
-const themes = ['light', 'dark', 'glass', 'neon', 'brutal', 'pastel'];
+const themes = ['light', 'dark', 'glass', 'neon', 'brutal', 'pastel', 'pop'];
 let themeIndex = 0;
 let colorTheme: string = themes[themeIndex];
 
