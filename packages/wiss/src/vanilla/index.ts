@@ -207,7 +207,7 @@ function reconcile(el: HTMLDivElement, toasts: Toast[], config: ResolvedConfig):
   });
 }
 
-export function initToaster(config?: WissConfig): void {
+export function toaster(config?: WissConfig): void {
   if (config) {
     setConfig(config);
   }

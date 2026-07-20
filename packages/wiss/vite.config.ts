@@ -10,7 +10,6 @@ export default defineConfig({
     dts({
       tsconfigPath: resolve(rootDir, 'tsconfig.json'),
       entryRoot: 'src',
-      rollupTypes: true,
     }),
   ],
   build: {
@@ -26,11 +25,13 @@ export default defineConfig({
         svelte: resolve(rootDir, 'src/svelte/index.ts'),
       },
       formats: ['es', 'cjs'],
-      fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'js' : 'cjs'}`,
     },
     rollupOptions: {
       external: ['tailwindcss', 'daisyui', 'react', 'react-dom', 'react/jsx-runtime', 'vue', 'svelte', 'svelte/internal'],
       output: {
+        preserveModules: true,
+        preserveModulesRoot: 'src',
+        entryFileNames: '[name].[format].js',
         assetFileNames: (assetInfo) => {
           if (assetInfo.name === 'style.css') return 'styles.css';
           return assetInfo.name || 'styles.css';

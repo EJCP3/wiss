@@ -1,4 +1,4 @@
-import { initToaster } from '../vanilla';
+import { toaster as vanillaToaster } from '../vanilla';
 import { subscribeHistory } from '../core';
 import type { Position, WissConfig, Toast } from '../core/types';
 import { readable } from 'svelte/store';
@@ -8,17 +8,17 @@ import { readable } from 'svelte/store';
  *
  * Since we can't ship a `.svelte` component from a pure Vite library
  * build (that would require the Svelte compiler plugin), we export a
- * simple `createToaster` action/function that the consumer calls from
+ * simple `toaster` action/function that the consumer calls from
  * their own component's `onMount`.
  *
  * ### Usage (Svelte 3/4)
  * ```svelte
  * <script>
  *   import { onMount } from 'svelte';
- *   import { createToaster } from '@ejcp/wiss/svelte';
- *   import { toast } from '@ejcp/wiss';
+ *   import { toaster } from 'wiss/svelte';
+ *   import { toast } from 'wiss';
  *
- *   onMount(() => createToaster({ position: 'bottom-right', theme: 'dark' }));
+ *   onMount(() => toaster({ position: 'bottom-right', theme: 'dark' }));
  * </script>
  *
  * <button on:click={() => toast.success('¡Hecho!')}>Notify</button>
@@ -27,17 +27,17 @@ import { readable } from 'svelte/store';
  * ### Usage (Svelte 5)
  * ```svelte
  * <script>
- *   import { createToaster } from '@ejcp/wiss/svelte';
- *   import { toast } from '@ejcp/wiss';
+ *   import { toaster } from 'wiss/svelte';
+ *   import { toast } from 'wiss';
  *
- *   $effect(() => createToaster({ position: 'bottom-right', theme: 'dark' }));
+ *   $effect(() => toaster({ position: 'bottom-right', theme: 'dark' }));
  * </script>
  *
  * <button onclick={() => toast.success('¡Hecho!')}>Notify</button>
  * ```
  */
-export function createToaster(config?: WissConfig): void {
-  initToaster(config);
+export function toaster(config?: WissConfig): void {
+  vanillaToaster(config);
 }
 
 export const toastHistory = readable<Toast[]>([], (set) => {

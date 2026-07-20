@@ -4,7 +4,7 @@ Librería de notificaciones toast **headless** y sin dependencias de runtime. El
 núcleo (`wiss`) es un "cerebro" de TypeScript puro —estado, cola, timers— que
 no sabe nada del DOM ni de ningún framework. La capa visual es intercambiable:
 por defecto trae sus propios temas (**light** y **dark**) o puedes optar
-por heredar el tema de tu proyecto vía **daisyUI** para que se adapte a tu diseño actual.
+por heredar el tema de tu proyecto vía **daisyUI** o **shadcn/ui** para que se adapte a tu diseño actual.
 
 Esta fase incluye un único adaptador, **Vanilla JS**, que también sirve para
 Astro.
@@ -12,20 +12,20 @@ Astro.
 ## Instalación
 
 ```bash
-pnpm add wiss
+pnpm add wissfort
 ```
 
 ## Uso básico (Vanilla JS)
 
 ```js
 // una vez, en el entry point de tu app
-import { initToaster } from 'wiss/vanilla';
-initToaster();
+import { toaster } from 'wissfort/vanilla';
+toaster();
 ```
 
 ```js
 // desde cualquier archivo
-import { toast } from 'wiss';
+import { toast } from 'wissfort';
 
 toast.success('Usuario creado');
 toast.error('Algo salió mal');
@@ -51,15 +51,15 @@ toast.promise(
 ---
 <slot />
 <script>
-  import { initToaster } from 'wiss/vanilla';
-  initToaster();
+  import { toaster } from 'wissfort/vanilla';
+  toaster();
 </script>
 ```
 
 Luego, desde cualquier componente o script del cliente:
 
 ```js
-import { toast } from 'wiss';
+import { toast } from 'wissfort';
 toast.success('¡Listo!');
 ```
 
@@ -72,9 +72,9 @@ Por defecto, la librería utiliza sus propios temas (**light** y **dark**) const
 Si usas **shadcn/ui** (en Tailwind v4 o usando variables de colores absolutas/hex/oklch), wiss ahora incluye soporte nativo. Configura `theme: 'shadcn'` y los toasts mapearán automáticamente sus colores a las variables de tu proyecto (como `--background`, `--foreground`, `--primary`, `--destructive`, etc.):
 
 ```js
-import { initToaster } from 'wiss/vanilla';
+import { toaster } from 'wissfort/vanilla';
 
-initToaster({
+toaster({
   theme: 'shadcn',
   position: 'bottom-right',
   duration: 4000,
@@ -87,9 +87,9 @@ initToaster({
 Si prefieres que los toasts hereden el estilo activo de **daisyUI** (claro, oscuro, cyberpunk, etc.), puedes usar `theme: 'daisy'`:
 
 ```js
-import { initToaster } from 'wiss/vanilla';
+import { toaster } from 'wissfort/vanilla';
 
-initToaster({
+toaster({
   theme: 'daisy', // 'dark' (default) | 'light' | 'shadcn' | 'daisy'
   position: 'bottom-right',
   duration: 4000,
@@ -101,19 +101,27 @@ Con `theme: 'daisy'`, wiss inyecta las clases de daisyUI (`alert`, `alert-succes
 
 Si no necesitas integrarlo con daisyUI o prefieres los estilos que trae wiss de base, simplemente no envíes la propiedad `theme` (o usa `'light'`/`'dark'`) y usará el tema predeterminado.
 
-## Nota importante sobre Tailwind
+## Configuración de Tailwind CSS
 
-Los temas de wiss traen las clases de Tailwind incrustadas en el código de la
-librería, que vive dentro de `node_modules`. Tailwind, por defecto, **no
-escanea `node_modules`**, así que si no le indicas la ruta explícitamente los
-toasts se renderizan sin estilos. Agrega la ruta de `wiss` al `content` de tu
-`tailwind.config.js`:
+Los temas de wiss traen clases utilitarias integradas en el código de la librería (`node_modules`). Para que los estilos se apliquen correctamente, debes indicarle a Tailwind que procese estos archivos.
+
+### Para Tailwind CSS v4 (y DaisyUI 5)
+En la versión 4, Tailwind utiliza una configuración basada en CSS. Simplemente añade la directiva `@source` en tu archivo CSS principal (donde importas tailwind) apuntando a la librería:
+
+```css
+/* app.css o globals.css */
+@import "tailwindcss";
+@source "../node_modules/wiss"; /* Ajusta la ruta si es necesario */
+```
+
+### Para Tailwind CSS v3 (y DaisyUI 4)
+Si sigues usando la versión 3 de Tailwind, debes agregar la ruta de `wiss` al array `content` en tu archivo de configuración:
 
 ```js
 // tailwind.config.js
 export default {
   content: [
-    './src/**/*.{astro,html,js,ts}',
+    './src/**/*.{astro,html,js,ts,vue,svelte,tsx}',
     './node_modules/wiss/dist/**/*.{js,mjs}',
   ],
   // ...
@@ -123,8 +131,8 @@ export default {
 ## Uso en React
 
 ```tsx
-import { Toaster } from 'wiss/react';
-import { toast } from 'wiss';
+import { Toaster } from 'wissfort/react';
+import { toast } from 'wissfort';
 
 function App() {
   return (
@@ -140,12 +148,12 @@ function App() {
 
 ```vue
 <script setup>
-import { WissToaster } from 'wiss/vue';
-import { toast } from 'wiss';
+import { Toaster } from 'wissfort/vue';
+import { toast } from 'wissfort';
 </script>
 
 <template>
-  <WissToaster position="bottom-right" theme="dark" />
+  <Toaster position="bottom-right" theme="dark" />
   <button @click="toast.success('¡Hecho!')">Notify</button>
 </template>
 ```
@@ -155,10 +163,10 @@ import { toast } from 'wiss';
 Para **Svelte 5**:
 ```svelte
 <script>
-  import { createToaster } from 'wiss/svelte';
-  import { toast } from 'wiss';
+  import { toaster } from 'wissfort/svelte';
+  import { toast } from 'wissfort';
 
-  $effect(() => createToaster({ position: 'bottom-right', theme: 'dark' }));
+  $effect(() => toaster({ position: 'bottom-right', theme: 'dark' }));
 </script>
 
 <button onclick={() => toast.success('¡Hecho!')}>Notify</button>
@@ -168,10 +176,10 @@ Para **Svelte 3/4**:
 ```svelte
 <script>
   import { onMount } from 'svelte';
-  import { createToaster } from 'wiss/svelte';
-  import { toast } from 'wiss';
+  import { toaster } from 'wissfort/svelte';
+  import { toast } from 'wissfort';
 
-  onMount(() => createToaster({ position: 'bottom-right', theme: 'dark' }));
+  onMount(() => toaster({ position: 'bottom-right', theme: 'dark' }));
 </script>
 
 <button on:click={() => toast.success('¡Hecho!')}>Notify</button>

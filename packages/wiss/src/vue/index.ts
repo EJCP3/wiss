@@ -21,18 +21,18 @@ import type { Position, WissConfig, Toast } from '../core/types';
  *
  * ```vue
  * <script setup>
- * import { WissToaster } from '@ejcp/wiss/vue';
- * import { toast } from '@ejcp/wiss';
+ * import { Toaster } from 'wiss/vue';
+ * import { toast } from 'wiss';
  * </script>
  *
  * <template>
- *   <WissToaster position="bottom-right" theme="dark" />
+ *   <Toaster position="bottom-right" theme="dark" />
  *   <button @click="toast.success('¡Hecho!')">Notify</button>
  * </template>
  * ```
  */
-export const WissToaster = defineComponent({
-  name: 'WissToaster',
+export const Toaster = defineComponent({
+  name: 'Toaster',
   props: {
     position: {
       type: String as PropType<Position>,

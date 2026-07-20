@@ -1,6 +1,6 @@
 {
-  "name": "@ejcp/wiss",
-  "version": "0.2.1",
+  "name": "wissfort",
+  "version": "0.3.0",
   "description": "Librería de notificaciones toast minimalista, personalizable y bonita",
   "keywords": [
     "toast",
@@ -15,38 +15,39 @@
     "type": "git",
     "url": "https://github.com/EJCP3/wiss.git"
   },
+  "homepage": "https://wiss-docs.vercel.app/",
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/core.js",
-      "require": "./dist/core.cjs",
-      "types": "./dist/core.d.ts"
+      "import": "./dist/core.es.js",
+      "require": "./dist/core.cjs.js",
+      "types": "./dist/core/index.d.ts"
     },
     "./vanilla": {
-      "import": "./dist/vanilla.js",
-      "require": "./dist/vanilla.cjs",
-      "types": "./dist/vanilla.d.ts"
+      "import": "./dist/vanilla.es.js",
+      "require": "./dist/vanilla.cjs.js",
+      "types": "./dist/vanilla/index.d.ts"
     },
     "./island": {
-      "import": "./dist/island.js",
-      "require": "./dist/island.cjs",
-      "types": "./dist/island.d.ts"
+      "import": "./dist/island.es.js",
+      "require": "./dist/island.cjs.js",
+      "types": "./dist/styles/island.d.ts"
     },
     "./styles.css": "./dist/styles.css",
     "./react": {
-      "import": "./dist/react.js",
-      "require": "./dist/react.cjs",
-      "types": "./dist/react.d.ts"
+      "import": "./dist/react.es.js",
+      "require": "./dist/react.cjs.js",
+      "types": "./dist/react/index.d.ts"
     },
     "./vue": {
-      "import": "./dist/vue.js",
-      "require": "./dist/vue.cjs",
-      "types": "./dist/vue.d.ts"
+      "import": "./dist/vue.es.js",
+      "require": "./dist/vue.cjs.js",
+      "types": "./dist/vue/index.d.ts"
     },
     "./svelte": {
-      "import": "./dist/svelte.js",
-      "require": "./dist/svelte.cjs",
-      "types": "./dist/svelte.d.ts"
+      "import": "./dist/svelte.es.js",
+      "require": "./dist/svelte.cjs.js",
+      "types": "./dist/svelte/index.d.ts"
     }
   },
   "files": [
