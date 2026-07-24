@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "pnpm --filter wiss build && astro build",
+    "build": "pnpm --filter wissfort build && astro build",
     "preview": "astro preview"
   },
   "dependencies": {
