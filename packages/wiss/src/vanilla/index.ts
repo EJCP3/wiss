@@ -107,13 +107,18 @@ function animateOut(node: HTMLElement): void {
   setTimeout(remove, EXIT_TIMEOUT_MS);
 }
 
-function playToastSound(type: ToastType) {
+function playToastSound(type: ToastType, customSound?: boolean | string) {
+  if (customSound === false || !getConfig().sound) return;
+  if (typeof customSound === 'string') {
+    play(customSound as any);
+    return;
+  }
   switch (type) {
     case 'success': play('success'); break;
-    case 'error': play('press'); break;
+    case 'error': play('error'); break;
     case 'warning': play('chime'); break;
     case 'info': play('droplet'); break;
-    case 'loading': play('bloom'); break;
+    case 'loading': play('loading'); break;
   }
 }
 
@@ -136,11 +141,14 @@ function reconcile(el: HTMLDivElement, toasts: Toast[], config: ResolvedConfig):
 
     if (existing) {
       const prevType = existing.dataset.state as ToastType;
+      const status = toast.type;
       update(existing, toast);
-      if (prevType !== toast.type && toast.type === 'success') {
-        playToastSound('success'); // Re-play if a promise resolves successfully
-      } else if (prevType !== toast.type && toast.type === 'error') {
-        playToastSound('error');
+      if (prevType !== toast.type) {
+        if (status === 'success') {
+          playToastSound('success', toast.sound); // Re-play if a promise resolves successfully
+        } else if (status === 'error') {
+          playToastSound('error', toast.sound);
+        }
       }
       return;
     }
@@ -172,7 +180,7 @@ function reconcile(el: HTMLDivElement, toasts: Toast[], config: ResolvedConfig):
       if (title) title.style.opacity = '';
       if (desc) desc.style.opacity = '';
       update(oldNode, newToast);
-      playToastSound(newToast.type);
+      playToastSound(newToast.type, newToast.sound);
     }, 400);
 
     return;
@@ -191,7 +199,7 @@ function reconcile(el: HTMLDivElement, toasts: Toast[], config: ResolvedConfig):
     el.appendChild(node);
     
     // Play enter sound
-    playToastSound(toast.type);
+    playToastSound(toast.type, toast.sound);
 
     // Double rAF: let the browser commit the hidden state before
     // removing it, otherwise the enter transition never plays.

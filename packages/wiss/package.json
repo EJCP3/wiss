@@ -93,6 +93,6 @@
     "vue": "^3.5.40"
   },
   "dependencies": {
-    "cuelume": "^0.1.0"
+    "cuelume": "^0.1.2"
   }
 }

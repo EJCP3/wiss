@@ -59,6 +59,7 @@ export function addToast(message: string | HTMLElement, type: ToastType, options
     ...(options.progressBar !== undefined ? { progressBar: options.progressBar } : {}),
     ...(options.icon !== undefined ? { icon: options.icon } : {}),
     ...(options.richText !== undefined ? { richText: options.richText } : {}),
+    ...(options.sound !== undefined ? { sound: options.sound } : {}),
   };
 
   const existingIndex = toasts.findIndex((t) => t.id === id);

@@ -24,6 +24,7 @@ export interface Toast {
   progressBar?: boolean;
   icon?: string | HTMLElement | SVGSVGElement;
   richText?: boolean;
+  sound?: boolean | string;
   createdAt: number;
 }
 
@@ -36,6 +37,7 @@ export interface ToastOptions {
   progressBar?: boolean;
   icon?: string | HTMLElement | SVGSVGElement;
   richText?: boolean;
+  sound?: boolean | string;
   createdAt?: number | Date;
 }
 
@@ -52,6 +54,7 @@ export interface WissConfig {
   replaceBehavior?: 'normal' | 'wiss';
   fontFamily?: string;
   richText?: boolean;
+  sound?: boolean;
 }
 
 export interface PromiseToastOptions<T = any> {

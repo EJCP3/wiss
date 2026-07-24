@@ -13,6 +13,7 @@ export interface ResolvedConfig {
   replaceBehavior: 'normal' | 'wiss';
   fontFamily?: string;
   richText: boolean;
+  sound: boolean;
 }
 
 const defaultConfig: ResolvedConfig = {
@@ -27,6 +28,7 @@ const defaultConfig: ResolvedConfig = {
   maxHistory: 20,
   replaceBehavior: 'normal',
   richText: false,
+  sound: true,
 };
 
 let config: ResolvedConfig = { ...defaultConfig };
@@ -48,6 +50,7 @@ export function setConfig(next: WissConfig): void {
     maxHistory: next.maxHistory ?? config.maxHistory,
     replaceBehavior: next.replaceBehavior ?? config.replaceBehavior,
     richText: next.richText ?? config.richText,
+    sound: next.sound ?? config.sound,
   };
   
   const resolvedFont = next.fontFamily ?? config.fontFamily;
